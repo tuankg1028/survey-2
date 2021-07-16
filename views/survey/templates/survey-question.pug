@@ -1,0 +1,259 @@
+extends ../survey-layout
+block survey-content
+  input(type="hidden" name="token" value=token)
+  .question-desc.mt-3
+    .wrap-forms
+      <ul class="list-group pl-0">
+        <li class="list-group-item active" aria-current="true">Training</li>
+        <li class="list-group-item p-3">
+          //- | Do you trust these individuals with your data
+          <ul class="list-group pl-0 mt-3">
+            <li class="list-group-item p-3">
+              | HealthPal is an app to record your health status. You can use it for personal tracking (no need to share with your doctor). To function, HealthPal requires some permissions. Please select the permissions that you can grant.
+              <div class="mt-4"> 
+                <label class="container-checkbox"> Access to file storage
+                  <input class="predict-question" type="checkbox" name="" value="0" />
+                  <span class="checkmark"> </span>
+                </label>
+                <label class="container-checkbox"> Access to file storage
+                  <input class="predict-question" type="checkbox" name="" value="0" />
+                  <span class="checkmark"> </span>
+                </label>
+                <label class="container-checkbox"> Access to file storage
+                  <input class="predict-question" type="checkbox" name="" value="0" />
+                  <span class="checkmark"> </span>
+                </label>
+                <label class="container-checkbox"> Access to file storage
+                  <input class="predict-question" type="checkbox" name="" value="0" />
+                  <span class="checkmark"> </span>
+                </label>
+                <label class="container-checkbox"> Access to file storage
+                  <input class="predict-question" type="checkbox" name="" value="0" />
+                  <span class="checkmark"> </span>
+                </label>
+                <label class="container-checkbox"> Access to file storage
+                  <input class="predict-question" type="checkbox" name="" value="0" />
+                  <span class="checkmark"> </span>
+                </label>
+                <label class="container-checkbox"> Access to file storage
+                  <input class="predict-question" type="checkbox" name="" value="0" />
+                  <span class="checkmark"> </span>
+                </label>
+              </div>
+            </li>
+
+          </ul>
+          
+          //- <table class="table mt-4">
+          //-   <thead>
+          //-     <tr>
+          //-       <th scope="col"></th>
+          //-       <th scope="col"></th>
+          //-       <th scope="col">Not at all</th>
+          //-       <th scope="col">No</th>
+          //-       <th scope="col">Neutral</th>
+          //-       <th scope="col">Yes</th>
+          //-       <th scope="col">Very much</th>
+          //-     </tr>
+          //-   </thead>
+          //-   <tbody>
+          //-     <tr>
+          //-       <th scope="row"></th>
+          //-       <td>Family members</td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-     </tr>
+          //-     <tr>
+          //-       <th scope="row"></th>
+          //-       <td>Doctors</td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-     </tr>
+          //-     <tr>
+          //-       <th scope="row"></th>
+          //-       <td>Nurses</td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-     </tr>
+          //-     <tr>
+          //-       <th scope="row"></th>
+          //-       <td>Insurance <br>Representatives</td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-       <td>
+          //-         <label class="container-checkbox">
+          //-           <input class="predict-question" type="checkbox" name="" value="0" />
+          //-           <span class="checkmark"> </span>
+          //-         </label>
+          //-       </td>
+          //-     </tr>
+          //-   </tbody>
+          //- </table>
+        </li>
+       
+      </ul>
+
+      <ul class="list-group pl-0 mt-3">
+        <li class="list-group-item p-3">
+          | HealthPal is an app to record your health status. You can use it for personal tracking (no need to share with your doctor). To function, HealthPal requires some permissions. Please select the permissions that you can grant.
+          <div class="mt-4"> 
+            <label class="container-checkbox"> Access to file storage
+              <input class="predict-question" type="checkbox" name="" value="0" />
+              <span class="checkmark"> </span>
+            </label>
+            <label class="container-checkbox"> Access to file storage
+              <input class="predict-question" type="checkbox" name="" value="0" />
+              <span class="checkmark"> </span>
+            </label>
+            <label class="container-checkbox"> Access to file storage
+              <input class="predict-question" type="checkbox" name="" value="0" />
+              <span class="checkmark"> </span>
+            </label>
+            <label class="container-checkbox"> Access to file storage
+              <input class="predict-question" type="checkbox" name="" value="0" />
+              <span class="checkmark"> </span>
+            </label>
+            <label class="container-checkbox"> Access to file storage
+              <input class="predict-question" type="checkbox" name="" value="0" />
+              <span class="checkmark"> </span>
+            </label>
+            <label class="container-checkbox"> Access to file storage
+              <input class="predict-question" type="checkbox" name="" value="0" />
+              <span class="checkmark"> </span>
+            </label>
+            <label class="container-checkbox"> Access to file storage
+              <input class="predict-question" type="checkbox" name="" value="0" />
+              <span class="checkmark"> </span>
+            </label>
+          </div>
+        </li>
+
+      </ul>
+
+      
+      <div style="display: flex;align-items: center;" class="mt-5">
+        <a class="login100-form-btn button-pre next-section-pre">Quay lai</a>
+        <a class="next-section next-section-submit">Gui</a>
+      <div> 
+
+ 
+  // Modal
+  #errorModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false")
+    .modal-dialog(role="document")
+      .modal-content
+        .modal-header
+          h5#exampleModalLabel.modal-title Error
+      
+        .modal-body
+          | Unfortunately something went wrong
+        .modal-footer
+          button.btn.btn-primary#btn-err(type="button" data-dismiss="modal") Try again
+
+block scriptsCustom
+  script(src='/js/question.js')

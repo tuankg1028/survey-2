@@ -1,0 +1,93 @@
+each question, index in questions
+  .wrap-app.mt-4
+    h3.title.text-center
+      | #{question.appName}
+    div.text-center.mt-1
+      | #{question.developer}
+    div.text-center
+      | #{question.categoryName}
+    // category
+    //- .category.text-center.mt-2
+    //-   span.category-label
+    //-     | Category
+    //-   | : #{question.categoryName}
+    .step.wizard-step.current.mt-3(style='')
+      //- // Description
+      //- .description.mt-3
+      //-   span.description-lavel.font-weight-bold
+      //-     | I – Description:
+      //-   div
+      //-     | !{question.description}
+
+
+      // Collection Personal Data
+      .section1.mt-3
+        // label
+        .section1-label.font-weight-bold
+          | This app may collect #{question.personalDataTypes.length} personal data type, namely: 
+          each personalDataType, index in question.personalDataTypes
+              | #{personalDataType.name}
+              if(index != question.personalDataTypes.length - 1)
+                | #{", "}
+              else 
+                | #{"."}
+        // node data
+        .wrap-node
+          ul 
+            each personalDataType in question.personalDataTypes
+              li    
+                | #{personalDataType.name}
+                each api in personalDataType.apis
+                  div - #{api.name}
+          
+      // Collection Personal Data
+      .section2.mt-3
+        // label
+        .section2-label.font-weight-bold
+          | Data Collection Purpose:
+        // node data
+        .wrap-node
+          ul 
+            li 
+              | Admin: (Cái nào có (1) hã liệt kê nha em)
+              div - Analysis: Đưa những đoạn test liên quan vào đây giúp anh (nhưng phải ấn dấu (+) thì mới hiện ra ko thì chỉ hiện label của từng purpose thôi)
+              div - Advertisement:
+
+
+      div.font-weight-bold.mt-3
+        | You will install this app    
+      // comments
+      .comments-data-judgement.mt-3
+        .final-judgement
+          //- // label
+          //- .comments-data-label.font-weight-bold.text-underline
+          //-   | II - Final judgment
+          // final question
+          .question-1.mt-2
+            .title Are you satisfied with our prediction model?
+            // anwsers
+            .anwsers.mt-2
+              label.container-radio
+                | Very Unsatisfy
+                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="1" required)
+                span.checkmark
+
+              label.container-radio
+                | Unsatisfy
+                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="2")
+                span.checkmark
+
+              label.container-radio
+                | Neutral
+                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="3")
+                span.checkmark
+
+              label.container-radio
+                | Satisfy
+                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="3")
+                span.checkmark
+
+              label.container-radio
+                | Very Satisfy
+                input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="3")
+                span.checkmark

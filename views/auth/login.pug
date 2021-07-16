@@ -1,0 +1,32 @@
+extends ../layout
+block variables
+  - var title = "Login"
+
+block content
+  .limiter
+    .container-login100
+      .wrap-login100
+        .login100-pic.js-tilt(data-tilt='')
+          img(src='/images/img-01.png' alt='IMG')
+        form(action="/auth/login" method="POST").login100-form.validate-form
+          span.login100-form-title
+            | Login
+          .wrap-input100.validate-input(data-validate='Valid email is required: ex@abc.xyz')
+            input.input100(type='text' name='email' placeholder='Email')
+            span.focus-input100
+            span.symbol-input100
+              i.fa.fa-envelope(aria-hidden='true')
+          
+          .container-login100-form-btn
+            button.login100-form-btn
+              | Login
+          //- .text-center.p-t-12
+          //-   span.txt1
+          //-     | Forgot
+          //-   a.txt2(href='#')
+          //-     | Username / Password?
+          .text-center.p-t-136
+            a.txt2(href='/auth/signup')
+              | Create your Account
+              i.fa.fa-long-arrow-right.m-l-5(aria-hidden='true')
+  

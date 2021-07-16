@@ -1,0 +1,47 @@
+version: '3.7'
+services:
+  nodeserver:
+    image: survey_nodeserver:latest
+    ports:
+      - "3333:3333"
+    # service deployment
+    # deploy:
+    #   mode: replicated
+    #   replicas: 2
+      # labels: [APP=NODE_SERVER]
+      # # service resource management
+      # resources:
+      #   # Hard limit - Docker does not allow to allocate more
+      #   limits:
+      #     cpus: '0.25'
+      #     memory: 512M
+      #   # Soft limit - Docker makes best effort to return to it
+      #   reservations:
+      #     cpus: '0.25'
+      #     memory: 256M
+      # # service restart policy
+      # restart_policy:
+      #   condition: on-failure
+      #   delay: 5s
+      #   max_attempts: 3
+      #   window: 120s
+      # # service update configuration
+      # update_config:
+      #   parallelism: 1
+      #   delay: 10s
+      #   failure_action: continue
+      #   monitor: 60s
+      #   max_failure_ratio: 0.3
+  redis:
+    image: "redis:alpine"
+    volumes:
+      - ./data/redis:/data
+  db:
+    image: mongo
+    volumes:
+      - ./data/db:/data/db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123123
+

@@ -1,0 +1,344 @@
+extends ../survey-layout
+block survey-content
+  input(type="hidden" name="campaignId" value=campaignId)
+  input(type="hidden" name="workerId" value=workerId)
+  input(type="hidden" name="slotId" value=slotId)
+  input(type="hidden" name="randKey" value=randKey)
+  input(type="hidden" name="unique_id" value="123122344")
+  .question-desc.mt-5
+    
+    .wrap-forms
+      // 4 questions
+      .slider-item
+        // ============= Short desc ============
+        #short-desc.mt-4
+          form(action="/handle-answer-micro", method="POST", class="main-form") 
+            button(type="submit" style="display='none';")
+            h3.title.text-center Project Description
+            // intro
+            .intro.mt-3
+              .intro-title.text-underline.font-weight-bold Introduction:
+              .intro-desc 
+                div Mobile devices, such as smartphones and tablets, are so popular today as billions of users all around the world are using them. Unfortunately, this wide adoption is coming with some potential privacy threats, as they give easy access to mobile apps to lots of personal and sensitive data, such as user locations, contacts, and so on. Individuals have the right to be informed on which personal data are collected by their apps. Unfortunately, often this information is provided by app developers in a form that is not easy to understand by individuals.
+                  br 
+                  br
+                  | In this project, we have proposed a novel measure that could help individuals to better understand the behaviour of apps with respect to the collection of their personal data. This is based on a static analysis of mobile app code to detect each possible data collection. Based on this, we build the so-called Data Access Pattern (DAP) of a target app and by comparing this DAP with those of similar apps we are able to determine whether the target app has to be considered risky for the individual privacy.
+            .intro.mt-3
+              .intro-title.text-underline.font-weight-bold To validate our measure, we need your help!:
+              .intro-desc 
+                div In the survey, we will show you for a target app the following general information: the app name, developer, category, and description.
+                div Then we show you some information about its DAP, without any further information about our risk estimation.
+                br
+                div We will ask you to give us feedback on the app’s DAP. In particular, we are interested to learn from you, for any piece of personal data, how much you agree on the fact the target app has to access this information for providing its service.
+                div Finally, we will ask you to provide a risk level for the target app given its DAP.
+          
+            //- // solution
+            //- .solution.mt-3
+            //-   .solution-title.text-underline.font-weight-bold Proposed solution:
+            //-   .solution-desc 
+            //-     div In this project, we propose a novel method that can help users to better understand the applications they are using as well as the personal data being accessed. Our method is based on some key info on how users feedback the necessary of special personal data and the risk level of this app.
+            //-     div.mt-3 The info of the app include:
+            //-     ul
+            //-       li The app name, developer, category, and description.
+            //-       li The user’s personal data is accessed by the app (the Data Access Pattern (DAP) of the app).
+            //- // solution
+            //- .contribution.mt-3
+            //-   .contribution-title.text-underline.font-weight-bold Participant contribution:
+            //-   .contribution-desc Participants will see the information of an app as presented above. After that, they will make their feedback by answering the questions regarding the necessary level of the personal data and the risk level of providing these data for this app. Finally, the participants will assess the risk level of this app.
+            // basic info
+            .basic-info.mt-3
+              b.title Basic information
+           
+              .row.mt-2
+                .col-12.col-md-6
+                  // age
+                  .row
+                    .col-12.col-md-2
+                      b.mr-2 Age: 
+                    .col-12.col-md-10
+                      .wrap-input100.validate-input(data-validate='Age is required')
+                        input.input100(type='text' name='age' placeholder='Age*' required)
+                        span.focus-input100
+                        span.symbol-input100
+                          img(src="/images/icons/hornbill-brands.svg", width="15")
+              
+                .col-12.col-md-6
+                  // gender
+                  .wrap-input100.validate-input
+                    b.mr-2 Gender: 
+                    .form-check.form-check-inline.ml-4
+                      input#inlineRadio1.form-check-input(type='radio' name='gender' value='male' required)
+                      label.form-check-label.pl-2(for='inlineRadio1') Male
+                    .form-check.form-check-inline.ml-5
+                      input#inlineRadio2.form-check-input(type='radio' name='gender' value='female')
+                      label.form-check-label.pl-2(for='inlineRadio2') Female
+                
+
+              .row.mt-2
+                .col-12.col-md-6
+                  // educational
+                  b.mr-2 Educational qualification: 
+                  .wrap-input100.validate-input.mt-1(data-validate='Educational qualification is required')
+                    input.input100(type='text' name='education' placeholder='Educational qualification*' required)
+                    span.focus-input100
+                    span.symbol-input100
+                      i.fa.fa-graduation-cap(aria-hidden='true')
+           
+                .col-12.col-md-6
+                  // occupation
+                  b.mr-2 Occupation: 
+                  .wrap-input100.validate-input.mt-1(data-validate='Occupation is required')
+                    input.input100(type='text' name='occupation' placeholder='Occupation*' required)
+                    span.focus-input100
+                    span.symbol-input100
+                      img(src="/images/icons/chalkboard-teacher-solid.svg", width="15")
+
+              .row.mt-2
+                .col-12.col-md-6
+                  // The field of work
+                  b.mr-2 The field of work: 
+                  .wrap-input100.validate-input.mt-1(data-validate='The field of work is required')
+                    input.input100(type='text' name='fieldOfWork' placeholder='The field of work*' required)
+                    span.focus-input100
+                    span.symbol-input100
+                      img(src="/images/icons/career.png", width="15")
+           
+                .col-12.col-md-6
+                  // The OS of devices
+                  b.mr-2 The OS of devices: 
+                  .wrap-input100.validate-input.mt-1(data-validate='The OS of devices is required')
+                    input.input100(type='text' name='OSOfDevices' placeholder='The OS of devices*' required)
+                    span.focus-input100
+                    span.symbol-input100
+                      img(src="/images/icons/os.png", width="15")
+                
+            // questions
+            .questions.mt-3
+              b.title Before participating in our survey, please answer the following questions:
+              // question 1
+              .question-1.mt-2
+                .title 1) Are you concerned about the privacy of your personal data when you use an Android app?
+                // anwsers
+                .anwsers.mt-2
+                  label.container-radio
+                    | Highly unconcerned
+                    input(type='radio'  name='privacy issue' value="1" required)
+                    span.checkmark
+
+                  label.container-radio
+                    | Unconcerned
+                    input(type='radio'  name='privacy issue' value="2")
+                    span.checkmark
+
+                  label.container-radio
+                    | Neutral
+                    input(type='radio'  name='privacy issue' value="3")
+                    span.checkmark
+
+                  label.container-radio
+                    | Concerned
+                    input(type='radio'  name='privacy issue' value="4")
+                    span.checkmark
+                  
+                  label.container-radio
+                    | Highly concerned
+                    input(type='radio'  name='privacy issue' value="5")
+                    span.checkmark
+              // question 2
+              .question-1.mt-2
+                .title 2)	Are you satisfied with the information provided by the privacy policy of Android apps?
+                // anwsers
+                .anwsers.mt-2
+                  label.container-radio
+                    |  Highly disatisfied
+                    input(type='radio'  name='satisfied' value="1" required)
+                    span.checkmark
+
+                  label.container-radio
+                    | Disatisfied
+                    input(type='radio'  name='satisfied' value="2")
+                    span.checkmark
+
+                  label.container-radio
+                    | Neutral
+                    input(type='radio'  name='satisfied' value="3")
+                    span.checkmark
+
+                  label.container-radio
+                    | Satisfied
+                    input(type='radio'  name='satisfied' value="4")
+                    span.checkmark
+                  
+                  label.container-radio
+                    |  Highly satisfied
+                    input(type='radio'  name='satisfied' value="5")
+                    span.checkmark
+              // question 3
+              .question-1.mt-2
+                .title 3) Do you think that reading information about an app (e.g., its description, requested permissions, previous users' comments) before installing it is useful?
+                // anwsers
+                .anwsers.mt-2
+                  label.container-radio
+                    | Very unnecessary
+                    input(type='radio'  name='relevant information' value="1" required)
+                    span.checkmark
+
+                  label.container-radio
+                    | Unnecessary
+                    input(type='radio'  name='relevant information' value="2")
+                    span.checkmark
+
+                  label.container-radio
+                    | Neutral
+                    input(type='radio'  name='relevant information' value="3")
+                    span.checkmark
+
+                  label.container-radio
+                    | Necessary
+                    input(type='radio'  name='relevant information' value="4")
+                    span.checkmark
+                  
+                  label.container-radio
+                    | Very necessary
+                    input(type='radio'  name='relevant information' value="5")
+                    span.checkmark
+              // question 4
+              .question-1.mt-2
+                .title 4) Are you interested in knowing which personal data your Android apps are accessing?
+                // anwsers
+                .anwsers.mt-2
+                  label.container-radio
+                    | Highly uninterested
+                    input(type='radio'  name='interested accessing data' value="1" required)
+                    span.checkmark
+
+                  label.container-radio
+                    | Uninterested
+                    input(type='radio'  name='interested accessing data' value="2")
+                    span.checkmark
+
+                  label.container-radio
+                    | Neutral
+                    input(type='radio'  name='interested accessing data' value="3")
+                    span.checkmark
+
+                  label.container-radio
+                    | Interested
+                    input(type='radio'  name='interested accessing data' value="4")
+                    span.checkmark
+                  
+                  label.container-radio
+                    | Highly interested
+                    input(type='radio'  name='interested accessing data' value="5")
+                    span.checkmark
+
+                
+                .error
+            
+      each question, index in questions
+        - var isActive =  index === 0 ? 'slick-active slick-current' : '';
+        // item
+        .slider-item(class=isActive)
+          // app id
+          input(type="hidden" class="app-id" value=question._id)
+          input(type="hidden" class="index" value=index+1)
+          input(type="hidden" class="status" value=0)
+          div.wrap-form
+      .slider-item
+        form(action="/handle-answer-micro", method="POST", class="main-form", id="form-" + index stt=questions.length + 1  style="padding: 0 15px") 
+          //- div.title.font-weight-bold.text-underline Comment
+          // comments
+          .wrap-comments-data
+
+
+
+
+            //- .wrap-app
+            //-   h3.title.text-center
+            //-     | Android Application 1
+            //-   // category
+            //-   .category.text-center.mt-2
+            //-     span.category-label
+            //-       | Category
+            //-     | : Category Name
+            //-   .step.wizard-step.current.mt-3(style='')
+            //-     // Description
+            //-     .description.mt-3
+            //-       span.description-lavel.font-weight-bold
+            //-         | I – Description:
+            //-       div
+            //-         | This is description
+              
+            //-   // final
+            //-   .question-1.mt-2
+            //-     .title 1) Based on the fact that
+            //-       span 
+            //-         b Android Application 1  &nbsp
+            //-       spann could collect the all mentioned data above, do you think this app could be risky for your personal data?
+            //-     // anwsers
+            //-     .anwsers.mt-2
+            //-       label.container-radio
+            //-         | Very low
+            //-         input(type='radio'  name="questions[" + 1 + "][final]" value="1" required)
+            //-         span.checkmark
+
+            //-       label.container-radio
+            //-         | Low
+            //-         input(type='radio'  name="questions[" + 1 + "][final]" value="2")
+            //-         span.checkmark
+
+            //-       label.container-radio
+            //-         | Medium
+            //-         input(type='radio'  name="questions[" + 1 + "][final]" value="3")
+            //-         span.checkmark
+
+            //-       label.container-radio
+            //-         | High
+            //-         input(type='radio'  name="questions[" + 1+ "][final]" value="4")
+            //-         span.checkmark
+                  
+            //-       label.container-radio
+            //-         | Very High
+            //-         input(type='radio'  name="questions[" + 1 + "][final]" value="5")
+            //-         //- input(type='radio'  name="questions[" + question.id + "][final]" value="5")
+            //-         span.checkmark
+            //-   // end final
+
+            //-   div.mt-3
+            //-     | Can you please to give me the reason why you think the risk level of 
+            //-     b Android Application 1 &nbsp
+            //-     | is 
+            //-     b Low &nbsp
+            //-     | ? If you have the other change which level you will choose? 
+            //-   // comment box
+            //-   div.mt-2
+            //-     textarea(name="comment", cols="30", rows="5" value="")
+         
+            // question 
+            .question-1.mt-3
+              .title Do you have any other comments on this survey? Please comment below:
+              div.mt-2.comments-data
+                textarea.mt-2.comments-data(name="comment", cols="30", rows="5" value="")
+          .wrap-btn-next
+              button.login100-form-btn.button-next Submit
+          //- .wrap-btn-pre
+          //-   button.login100-form-btn.button-pre.slick-prev Back
+
+    h5.text-center
+      span.pagingInfo
+      
+ 
+  // Modal
+  #errorModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false")
+    .modal-dialog(role="document")
+      .modal-content
+        .modal-header
+          h5#exampleModalLabel.modal-title Error
+      
+        .modal-body
+          | Unfortunately something went wrong
+        .modal-footer
+          button.btn.btn-primary#btn-err(type="button" data-dismiss="modal") Try again
+
+block scriptsCustom
+  script(src='/js/question.js')

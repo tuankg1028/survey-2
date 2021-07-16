@@ -1,0 +1,24 @@
+extends ../layout
+
+block content
+
+  a#button
+  .container-survey
+    .header
+    .wrap-survey
+      .wrap-content
+        ul.nav.nav-tabs
+          // Questions
+          li.nav-item
+            a.nav-link.active(data-toggle='tab', href='#questions') #{pageName || "Testing"}
+          //- li.nav-item
+          //-   a.nav-link(data-toggle='tab', href='#dap') DAP
+          //- li.nav-item
+          //-   a.nav-link(data-toggle='tab', href='#background') Background
+        // Tab panes
+        .tab-content
+          // Question
+          #questions.container.tab-pane.active
+            block survey-content
+            
+    

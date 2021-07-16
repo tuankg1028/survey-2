@@ -1,0 +1,33 @@
+extends ../survey-layout
+block survey-content
+  form(action="https://ttv.microworkers.com/dotask/submitProof/"+  campaignId +"/B", method="POST", class="main-form", id="form-" + index stt=questions.length + 1) 
+    input(type="hidden" name="campaignId" value=campaignId)
+    input(type="hidden" name="workerId" value=workerId)
+    input(type="hidden" name="unique_id" value="1231235453")
+    // comments
+    .comments-data.mt-3
+      // question 
+      .question-1.mt-3
+        .title Do you have any other comments on this survey? Please comment below:
+        textarea(name="comment", cols="30", rows="5" value="")
+    
+    .wrap-btn-next
+        button.login100-form-btn.button-next Submit
+    //- .wrap-btn-pre
+    //-   button.login100-form-btn.button-pre.slick-prev Back
+
+  
+    // Modal
+    #errorModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false")
+      .modal-dialog(role="document")
+        .modal-content
+          .modal-header
+            h5#exampleModalLabel.modal-title Error
+        
+          .modal-body
+            | Unfortunately something went wrong
+          .modal-footer
+            button.btn.btn-primary#btn-err(type="button" data-dismiss="modal") Try again
+
+  block scriptsCustom
+    script(src='/js/question.js')

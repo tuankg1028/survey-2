@@ -1,0 +1,95 @@
+extends ../survey-layout
+block survey-content
+  form#form-intro(action="/handle-intro" method="POST")
+    input.input100(type='hidden' name='email' value=email)
+    // ============= Short desc ============
+    #short-desc.mt-4
+      // basic info
+      .basic-info.mt-3
+        .row.mt-2
+          .col-12.col-md-6
+            // age
+            .row
+              .col-12.col-md-2
+                b.mr-2 Age: 
+              .col-12.col-md-10
+                .wrap-input100.validate-input(data-validate='Age is required')
+                  input.input100(type='text' name='age' placeholder='Age*' required)
+                  span.focus-input100
+                  span.symbol-input100
+                    img(src="/images/icons/hornbill-brands.svg", width="15")
+        
+          .col-12.col-md-6
+            // gender
+            .wrap-input100.validate-input
+              b.mr-2 Gender: 
+              .form-check.form-check-inline.ml-4
+                input#inlineRadio1.form-check-input(type='radio' name='gender' value='male' required)
+                label.form-check-label.pl-2(for='inlineRadio1') Male
+              .form-check.form-check-inline.ml-5
+                input#inlineRadio2.form-check-input(type='radio' name='gender' value='female')
+                label.form-check-label.pl-2(for='inlineRadio2') Female
+          
+
+        .row.mt-2
+          .col-12.col-md-6
+            // educational
+            b.mr-2 Educational qualification: 
+            .wrap-input100.validate-input.mt-1(data-validate='Educational qualification is required')
+              input.input100(type='text' name='education' placeholder='Educational qualification*' required)
+              span.focus-input100
+              span.symbol-input100
+                i.fa.fa-graduation-cap(aria-hidden='true')
+      
+          .col-12.col-md-6
+            // occupation
+            b.mr-2 Occupation: 
+            .wrap-input100.validate-input.mt-1(data-validate='Occupation is required')
+              input.input100(type='text' name='occupation' placeholder='Occupation*' required)
+              span.focus-input100
+              span.symbol-input100
+                img(src="/images/icons/chalkboard-teacher-solid.svg", width="15")
+
+        .row.mt-2
+          .col-12.col-md-6
+            // The field of work
+            b.mr-2 The field of work: 
+            .wrap-input100.validate-input.mt-1(data-validate='The field of work is required')
+              input.input100(type='text' name='fieldOfWork' placeholder='The field of work*' required)
+              span.focus-input100
+              span.symbol-input100
+                img(src="/images/icons/career.png", width="15")
+      
+          //- .col-12.col-md-6
+          //-   // The OS of devices
+          //-   b.mr-2 The OS of devices: 
+          //-   .wrap-input100.validate-input.mt-1(data-validate='The OS of devices is required')
+          //-     input.input100(type='text' name='OSOfDevices' placeholder='The OS of devices*' required)
+          //-     span.focus-input100
+          //-     span.symbol-input100
+          //-       img(src="/images/icons/os.png", width="15")
+          .col-12.col-md-6
+            // Country
+            b.mr-2 Country 
+            .wrap-input100.validate-input.mt-1(data-validate='Country is required')
+              input.input100(type='text' name='country' placeholder='Country*' required)
+              span.focus-input100
+              span.symbol-input100
+                img(src="/images/icons/country.png", width="15")
+
+          //- .col-12.col-md-6
+          //-   // Email
+          //-   b.mr-2 Email 
+          //-   .wrap-input100.validate-input.mt-1(data-validate='Email is required')
+          //-     input.input100(type='text' name='email' placeholder='Email*' required)
+          //-     span.focus-input100
+          //-     span.symbol-input100
+          //-       i.fa.fa-envelope(aria-hidden='true')
+          
+   
+        
+        
+        .wrap-btn-next
+          button.login100-form-btn.button-intro Next
+      // end form
+    

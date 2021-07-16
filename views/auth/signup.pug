@@ -1,0 +1,123 @@
+extends ../layout
+block variables
+  - var title = "Signup"
+
+block content
+  .limiter
+    .container-login100
+      .wrap-login100
+        .login100-pic.js-tilt(data-tilt='')
+          img(src='/images/img-01.png' alt='IMG')
+        form(action="/auth/signup" method="POST").validate-form.signup100-form
+          span.login100-form-title
+            | Sign Up
+          // full name
+          .wrap-input100.validate-input(data-validate='Full name is required')
+            input.input100(type='text' name='fullName' placeholder='Full name*')
+            span.focus-input100
+            span.symbol-input100
+              i.fa.fa-user(aria-hidden='true')
+          // email
+          .wrap-input100.validate-input(data-validate='Valid email is required: ex@gmail.com')
+            input.input100(type='text' name='email' placeholder='Email*')
+            span.focus-input100
+            span.symbol-input100
+              i.fa.fa-envelope(aria-hidden='true')
+          // age
+          .wrap-input100.validate-input(data-validate='Age is required')
+            input.input100(type='text' name='age' placeholder='Age*')
+            span.focus-input100
+            span.symbol-input100
+              img(src="/images/icons/hornbill-brands.svg", width="15")
+
+          // gender
+          .wrap-input100.validate-input.mt-3
+            b.mr-2 Gender: 
+            .form-check.form-check-inline.ml-4
+              input#inlineRadio1.form-check-input(type='radio' name='gender' value='male' required)
+              label.form-check-label.pl-2(for='inlineRadio1') Male
+            .form-check.form-check-inline.ml-5
+              input#inlineRadio2.form-check-input(type='radio' name='gender' value='female')
+              label.form-check-label.pl-2(for='inlineRadio2') Female
+
+          // The field of work: 
+          .wrap-input100.validate-input(data-validate='The field of work is required')
+            input.input100(type='text' name='fieldOfWork' placeholder='The field of work*')
+            span.focus-input100
+            span.symbol-input100
+              i.fa.fa-graduation-cap(aria-hidden='true')
+
+          // educational
+          .wrap-input100.validate-input(data-validate='Educational qualification is required')
+            input.input100(type='text' name='education' placeholder='Educational qualification*')
+            span.focus-input100
+            span.symbol-input100
+              i.fa.fa-graduation-cap(aria-hidden='true')
+
+          
+            
+
+          //- // speciality
+          //- .wrap-input100.validate-input(data-validate='Speciality is required')
+          //-   input.input100(type='text' name='speciality' placeholder='Speciality*')
+          //-   span.focus-input100
+          //-   span.symbol-input100
+          //-     img(src="/images/icons/chalkboard-teacher-solid.svg", width="15")
+
+          //- // occupation
+          //- .wrap-input100.validate-input(data-validate='Occupation is required')
+          //-   input.input100(type='text' name='occupation' placeholder='Occupation*')
+          //-   span.focus-input100
+          //-   span.symbol-input100
+          //-     img(src="/images/icons/chalkboard-teacher-solid.svg", width="15")
+
+          // address
+          //- .wrap-input100.validate-input(data-validate='Address is required')
+          //-   input.input100(type='text' name='address' placeholder='Address*')
+          //-   span.focus-input100
+          //-   span.symbol-input100
+          //-     i.fa.fa-address-card-o(aria-hidden='true')
+          // city and country
+       
+           // country
+          .wrap-input100.validate-input(data-validate='Country is required')
+                input.input100(type='text' name='country' placeholder='Country*')
+                span.focus-input100
+                span.symbol-input100
+                  i.fa.fa-globe(aria-hidden='true')
+
+          .container-login100-form-btn
+            button.login100-form-btn
+              | Create account
+          //- .text-center.p-t-12
+          //-   span.txt1
+          //-     | Forgot
+          //-   a.txt2(href='#')
+          //-     | Username / Password?
+          .text-center.p-t-25
+            a.txt2(href='/auth/login')
+              | Already have an account
+              i.fa.fa-long-arrow-right.m-l-5(aria-hidden='true')
+
+  //- if (isSignedUp) 
+    //- #ignismyModal.modal.fade(role='dialog')
+    //-   .modal-dialog
+    //-     .modal-content
+    //-       .modal-header
+    //-         button.close(type='button' data-dismiss='modal' aria-label='')
+    //-           span &times;
+    //-       .modal-body
+    //-         .thank-you-pop
+    //-           img(src='http://goactionstations.co.uk/wp-content/uploads/2017/03/Green-Round-Tick.png' alt='')
+    //-           h1 Success!
+    //-           p Registered successfully. Please login! 
+    //-             a(href="/auth/login")
+    //-               | Continue
+
+block scriptsCustom
+  if (isSignedUp) 
+    script.
+      toastr.success('Registered successfully')
+
+
+  

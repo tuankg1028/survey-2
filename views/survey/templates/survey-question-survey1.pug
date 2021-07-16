@@ -1,0 +1,41 @@
+extends ../survey-layout
+block survey-content
+  input(type="hidden" name="token" value=token)
+  .question-desc.mt-5
+    .wrap-forms
+      
+      each question, index in questions
+        - var isActive =  index === 0 ? 'slick-active slick-current' : '';
+        // item
+        .slider-item(class=isActive)
+          // app id
+          input(type="hidden" class="app-id" value=question._id)
+          input(type="hidden" class="status" value=0)
+          div.wrap-form
+      .slider-item
+        form(action="/handle-answer-survey1", method="POST", class="main-form", id="form-" + index stt=questions.length + 1) 
+          // comments
+          .comments-data.mt-3
+            // question 
+            .question-1.mt-3
+              .title Do you have any other comments on this survey? Please comment below:
+              textarea(name="comment", cols="30", rows="5" value="" required)
+          .wrap-btn-next
+              button.login100-form-btn.button-next Submit
+
+    h5.text-center
+      span.pagingInfo
+  // Modal
+  #errorModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false")
+    .modal-dialog(role="document")
+      .modal-content
+        .modal-header
+          h5#exampleModalLabel.modal-title Error
+      
+        .modal-body
+          | Unfortunately something went wrong
+        .modal-footer
+          button.btn.btn-primary#btn-err(type="button" data-dismiss="modal") Try again
+
+block scriptsCustom
+  script(src='/js/question-survey1.js')

@@ -1,0 +1,293 @@
+form(action="/main-action", method="POST", predictionLevel=question.predictionLevel appId=question.appId indexQuestion=indexQuestion descLength=question.descLength style="padding: 0 15px") 
+  input(type="hidden" name="questions[" + question.id + "][time]" value=1 class="count-time")
+  
+  button(type="submit" style="display='none';")
+  // app name
+  h3.title.text-center
+    | Android Application #{indexQuestion}
+  // category
+  .category.text-center.mt-2
+    span.category-label
+      | Category
+    | : #{question.categoryName}
+  .step.wizard-step.current.mt-3(style='')
+    //- // Description
+    //- .description.mt-3
+    //-   span.description-lavel.font-weight-bold
+    //-     | I – Description:
+    //-   div
+    //-     | !{question.description}
+
+
+    // Collection Personal Data
+    .colec-data.mt-3
+      // label
+      .colec-data-label.font-weight-bold
+        | I – Collection of personal data:
+      // node data
+      .wrap-node
+        | Please note that the fact that we ask your feedback for each category 
+        b does not mean &nbsp
+        | that it indeed collect this data.
+        
+        br
+        br
+        | The size of the data that an Android app is able to collect from your mobile device is really impressive. Since we do not want to annoy too much, we have aggregated these data in 
+        b #{question.nodes.length} &nbsp
+        | categories:&nbsp
+        b.lowercase-string
+          each node, nodeIndex in question.nodes
+            | #{node.group}
+            if(nodeIndex != question.nodes.length - 1)
+              | #{", "}
+            else 
+              | #{"."}
+        br
+        br
+        | For each of them, we provide a short description and ask your feedback.
+        each node, nodeIndex in question.nodes
+          // node
+          .node.mt-3
+            .node-title.pl-3
+              span.font-weight-bold.text-underline
+                | #{nodeIndex + 1}. #{node.group}:
+              span.desc 
+                | !{node.description}
+            // final question on node
+            //- .question-1.mt-2.pl-3
+            //-     .title Q#{nodeIndex + 1}: Do you think
+            //-       span 
+            //-         b.lowercase-string= question.name
+            //-       | &nbspneeds to access this data to provide its service?
+                // anwsers
+                //- .anwsers.mt-2
+                //-   label.container-radio
+                //-     | Highly unnecessary	 
+                //-     input(type='radio'  name="questions[" + question.id + "][" + node.name + "][final]" value="1" required)
+                //-     span.checkmark
+
+                //-   label.container-radio
+                //-     | Unnecessary
+                //-     input(type='radio'  name="questions[" + question.id + "][" + node.name + "][final]" value="2" )
+                //-     span.checkmark
+                
+                //-   label.container-radio
+                //-     | Neutral
+                //-     input(type='radio'  name="questions[" + question.id + "][" + node.name + "][final]" value="3" )
+                //-     span.checkmark
+                
+                //-   label.container-radio
+                //-     | Necessary
+                //-     input(type='radio'  name="questions[" + question.id + "][" + node.name + "][final]" value="4")
+                //-     span.checkmark
+                
+                //-   label.container-radio
+                //-     | Highly necessary
+                //-     input(type='radio'  name="questions[" + question.id + "][" + node.name + "][final]" value="5")
+                //-     span.checkmark
+              
+            .node-desc.pl-5
+              // ============================ node.questions.groups ======================
+              // questions of nodes
+              each group, groupIndex in node.questions.groups
+            
+                span.font-weight-bold.text-underline
+                  | #{nodeIndex + 1}.#{groupIndex + 1} 
+                  span.capitalizeFLetter.text-underline #{group.keyword}: 
+
+              
+                span
+                  | &nbsp!{group.description}.
+                //- if(group.questionData.length > 0)
+                //-   span 
+                //-     | (access 
+                //-   span.font-weight-bold #{group.questionData.length} 
+                //-   span 
+                //-     | features including: 
+                //-   each buildTreeLeaf, indexBuildTreeLeaf in group.questionData
+                //-     span #{buildTreeLeaf.replacedName}
+                //-     if(indexBuildTreeLeaf != group.questionData.length - 1)
+                //-       | #{", "}
+                //-     else 
+                //-       | #{"). "}
+                
+                div.mt-3 Q#{nodeIndex + 1}.#{groupIndex + 1}: Do you think this app needs to access this data to provide its service?
+                  // sub questions of nodes
+                  .anwsers.mt-2.wrap-anwser
+                    label.container-radio
+                      | Highly unnecessary	 
+                      input(type='radio' name="questions[" + question.id + "][" + node.name + "][group][" + group.name + "]"  value="1" required)
+                      span.checkmark
+
+                    label.container-radio
+                      | Unnecessary
+                      input(type='radio' name="questions[" + question.id + "][" + node.name + "][group][" + group.name + "]"  value="2")
+                      span.checkmark
+
+                    label.container-radio
+                      | Neutral
+                      input(type='radio' name="questions[" + question.id + "][" + node.name + "][group][" + group.name + "]"  value="3")
+                      span.checkmark
+
+                    label.container-radio
+                      | Necessary
+                      input(type='radio' name="questions[" + question.id + "][" + node.name + "][group][" + group.name + "]"  value="4")
+                      span.checkmark
+                    
+                    label.container-radio
+                      | Highly necessary
+                      input(type='radio' name="questions[" + question.id + "][" + node.name + "][group][" + group.name + "]"  value="5")
+                      span.checkmark
+                  
+                  div.wrap-leaf-node-more
+                    //- div.see-less-btn() Read less
+                    .more.sub-anwser
+                      table.table.table-bordered
+                        thead
+                          tr
+                            th(scope='col') #
+                            th(scope='col')
+                              b.capitalizeFLetter #{group.keyword}
+                            th(scope='col')
+                              b Detail
+                        tbody
+                          each buildTreeLeaf, indexBuildTreeLeaf in group.questionData
+                            tr
+                              th(scope='row')= indexBuildTreeLeaf + 1
+                              td
+                                b.capitalizeFLetter #{buildTreeLeaf.replacedName}
+                              td 
+                                if(buildTreeLeaf.details.length == 1)
+                                  div=  buildTreeLeaf.details[0]
+                                else if(buildTreeLeaf.details.length > 1)
+                                  div= buildTreeLeaf.details[0]
+                                  div.more
+                                    -for (var i = 1; i < buildTreeLeaf.details.length; i++)
+                                      div= buildTreeLeaf.details[i]
+                                  div.see-more-btn() Read more
+                            tr
+                              td(colspan=3 style="border-top-width:0") 
+                                // question
+                                .question-1.mt-2
+                                  .title Q#{nodeIndex + 1}.#{groupIndex + 1}.#{indexBuildTreeLeaf + 1}: Do you think
+                                    span 
+                                      b.lowercase-string= question.name
+                                    | &nbspneeds to access this data to provide its service?
+                                  // anwsers
+                                  .anwsers.mt-2
+                                    label.container-radio
+                                      | Highly unnecessary	 
+                                      input(type='radio' name="questions[" + question.id + "][" + node.name + "][" + buildTreeLeaf.name + "]" value="1" required)
+                                      span.checkmark
+
+                                    label.container-radio
+                                      | Unnecessary
+                                      input(type='radio' name="questions[" + question.id + "][" + node.name + "][" + buildTreeLeaf.name + "]" value="2")
+                                      span.checkmark
+
+                                    label.container-radio
+                                      | Neutral
+                                      input(type='radio' name="questions[" + question.id + "][" + node.name + "][" + buildTreeLeaf.name + "]" value="3")
+                                      span.checkmark
+
+                                    label.container-radio
+                                      | Necessary
+                                      input(type='radio' name="questions[" + question.id + "][" + node.name + "][" + buildTreeLeaf.name + "]" value="4")
+                                      span.checkmark
+                                    
+                                    label.container-radio
+                                      | Highly necessary
+                                      input(type='radio' name="questions[" + question.id + "][" + node.name + "][" + buildTreeLeaf.name + "]" value="5")
+                                      span.checkmark
+                    
+                    //- div.see-more-btn() Read more
+
+                  
+  
+    // comments
+    .comments-data-judgement.mt-3
+      .final-judgement
+        // label
+        .comments-data-label.font-weight-bold.text-underline
+          | II - Final judgment
+        // final question
+        .question-1.mt-2
+          .title 1) Based on the fact that it could collect the all mentioned data above, do you think this app could be risky for your personal data?
+          // anwsers
+          .anwsers.mt-2
+            label.container-radio
+              | Very low
+              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="1" required)
+              span.checkmark
+
+            label.container-radio
+              | Low
+              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="2")
+              span.checkmark
+
+            label.container-radio
+              | Neutral
+              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="3")
+              span.checkmark
+
+            label.container-radio
+              | High
+              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="4")
+              span.checkmark
+            
+            label.container-radio
+              | Very High
+              input(type='radio' class="final-question" name="questions[" + question.id + "][final]" value="5")
+              span.checkmark
+      
+    
+
+        
+      if(isCommented)
+        // comments
+        div(class="mt-3 wrap-comment-final")
+          // label
+          .comments-data-label.font-weight-bold.text-underline
+            | III - Participants comments
+          //- // question
+          //- .question-1.mt-3
+              //-     .title 1) In your opinion, what kind of categories violate users' privacy?
+              //-     // anwsers
+              //-     .anwsers.mt-2
+              //-       each category in categories
+              //-         label.container-checkbox
+              //-           | #{category.name}
+              //-           input(type='checkbox'  name="questions[" + question.id + "][category]" value=category._id)
+              //-           span.checkmark
+
+          
+            // question 
+          .comment-final.mt-3.comments-data
+            .title 1) 
+              | Can you please to give me the reason why you think the risk level of  &nbsp
+              b Android Application #{indexQuestion} &nbsp
+              | is 
+              b.awnser-filnal
+              | &nbsp ?
+            textarea(name="questions[" + question.id + "][comment]", cols="30", rows="5" required)
+
+
+
+        //- .carousel-item
+        //-   img.d-block.w-100(src='...', alt='Third slide')
+
+        //- .carousel-item
+        //-   img.d-block.w-100(src='...', alt='Fourth slide')
+
+
+
+
+
+
+
+    //- a.carousel-control-prev(href='#carouselExampleControls', role='button', data-slide='prev')
+    //-   span.carousel-control-prev-icon(aria-hidden='true')
+    //-   span.sr-only Previous
+    //- a.carousel-control-next(href='#carouselExampleControls', role='button', data-slide='next')
+    //-   span.carousel-control-next-icon(aria-hidden='true')
+    //-   span.sr-only Next

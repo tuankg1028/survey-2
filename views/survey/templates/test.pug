@@ -1,0 +1,296 @@
+    form(action="/main-action", method="POST", id="form-" + index stt=index+1) 
+            input(type="hidden" name="questions[" + question.id + "][time]" value=1 class="count-time")
+            button(type="submit" style="display='none';")
+            // app name
+            h3.title.text-center= question.name
+            .step.wizard-step.current.mt-3(style='')
+              h6.main_question.mb-2.font-weight-bold
+                //- | 1.
+              // titles
+              .titles
+                // app name
+                .app-name
+                  span.font-weight-bold.app-name-label
+                    | Name of Application
+                  | : #{question.name}
+                // read more
+                div.more
+                  // Developer
+                  .developer
+                    span.font-weight-bold.developer-label
+                      | Developer
+                    | : #{question.developers}
+
+                  // category
+                  .category
+                    span.font-weight-bold.category-label
+                      | Category
+                    | : #{question.categoryName}
+                  // Description
+                  .description.mt-3
+                    span.description-lavel.font-weight-bold
+                      | I – Description: 
+                    div
+                      |  !{question.description}
+                  // Permission 
+                  //- .permission-section.mt-3
+                  //-   // label
+                  //-   .colec-data-label.font-weight-bold
+                  //-     | II – Permission:
+                  //-   .permission-content 
+                      
+                  //-     each permission in question.permissions
+                  //-       // permission
+                  //-       .row.mt-2
+                  //-         .col= permission.keyword
+                  //-         .col= permission.detail
+                div.see-more-btn() Read more
+          
+                // Collection Personal Data
+                .colec-data.mt-3
+                  // label
+                  .colec-data-label.font-weight-bold
+                    | II – Collection Personal Data:
+                  // node data
+                  .wrap-node
+                    | This section describes personal data collected by 
+                    b #{question.name}
+                    each node, nodeIndex in question.nodes
+                      // node
+                      .node.mt-3
+                        .node-title.pl-3
+                          span.font-weight-bold.text-underline
+                            | #{nodeIndex + 1}. #{node.group}:
+                          span.desc 
+                            | !{node.questions.groups.length > 1 ? node.description : ""}
+                        // final question on node
+                        .question-1.mt-2.pl-3
+                            .title Q#{nodeIndex + 1}: How do you rate the risk on your 
+                              span 
+                                b= node.group
+                              | &nbspin 
+                              span  
+                                b= question.name
+                              | &nbspapp?
+                            // anwsers
+                            .anwsers.mt-2
+                              label.container-radio
+                                | Highly unnecessary	 
+                                input(type='radio'  name="questions[" + question.id + "][" + node.name + "][final]" value="1" required)
+                                span.checkmark
+
+                              label.container-radio
+                                | Unnecessary
+                                input(type='radio'  name="questions[" + question.id + "][" + node.name + "][final]" value="2" )
+                                span.checkmark
+                            
+                              label.container-radio
+                                | Neutral
+                                input(type='radio'  name="questions[" + question.id + "][" + node.name + "][final]" value="3" )
+                                span.checkmark
+                            
+                              label.container-radio
+                                | Necessary
+                                input(type='radio'  name="questions[" + question.id + "][" + node.name + "][final]" value="4")
+                                span.checkmark
+                            
+                              label.container-radio
+                                | Highly necessary
+                                input(type='radio'  name="questions[" + question.id + "][" + node.name + "][final]" value="5")
+                                span.checkmark
+                          
+                        .node-desc.pl-5
+                          // ============================ node.questions.groups ======================
+                          // questions of nodes
+                          each group, groupIndex in node.questions.groups
+                        
+                            span.font-weight-bold.text-underline
+                              | #{nodeIndex + 1}.#{groupIndex + 1} #{group.name}: 
+                            span
+                              | !{group.description}
+                           
+                            div.mt-3 Q#{nodeIndex + 1}.#{groupIndex + 1}: How do you rate the need from
+                              span 
+                                b= question.name
+                              | &nbspapp to access 
+                              span 
+                                b= group.keyword
+                              | &nbspinformation?
+                              // sub questions of nodes
+                              .anwsers.mt-2.wrap-anwser
+                                label.container-radio
+                                  | Highly unnecessary	 
+                                  input(type='radio' name="questions[" + question.id + "][" + node.name + "][group][" + group.name + "]"  value="1" required)
+                                  span.checkmark
+
+                                label.container-radio
+                                  | Unnecessary
+                                  input(type='radio' name="questions[" + question.id + "][" + node.name + "][group][" + group.name + "]"  value="2")
+                                  span.checkmark
+
+                                label.container-radio
+                                  | Neutral
+                                  input(type='radio' name="questions[" + question.id + "][" + node.name + "][group][" + group.name + "]"  value="3")
+                                  span.checkmark
+
+                                label.container-radio
+                                  | Necessary
+                                  input(type='radio' name="questions[" + question.id + "][" + node.name + "][group][" + group.name + "]"  value="4")
+                                  span.checkmark
+                                
+                                label.container-radio
+                                  | Highly necessary
+                                  input(type='radio' name="questions[" + question.id + "][" + node.name + "][group][" + group.name + "]"  value="5")
+                                  span.checkmark
+                              
+                              .more.sub-anwser
+                                table.table.table-bordered
+                                  thead
+                                    tr
+                                      th(scope='col') #
+                                      th(scope='col')
+                                        b #{group.keyword}
+                                      th(scope='col')
+                                        b Detail
+                                  tbody
+                                    each buildTreeLeaf, indexBuildTreeLeaf in group.questionData
+                                      tr
+                                        th(scope='row')= indexBuildTreeLeaf + 1
+                                        td
+                                          b #{buildTreeLeaf.replacedName}
+                                        td 
+                                          if(buildTreeLeaf.details.length == 1)
+                                            div=  buildTreeLeaf.details[0]
+                                          else if(buildTreeLeaf.details.length > 1)
+                                            div= buildTreeLeaf.details[0]
+                                            div.more
+                                              -for (var i = 1; i < buildTreeLeaf.details.length; i++)
+                                                div= buildTreeLeaf.details[i]
+                                            div.see-more-btn() Read more
+                                      tr
+                                        td(colspan=3 style="border-top-width:0") 
+                                          // question
+                                          .question-1.mt-2
+                                            .title Q#{nodeIndex + 1}.#{groupIndex + 1}.#{indexBuildTreeLeaf + 1}: How do you rate the necessity of 
+                                              span 
+                                                b= buildTreeLeaf.name
+                                              | &nbspin 
+                                              span 
+                                                b= question.name
+                                              | &nbspapp?
+                                            // anwsers
+                                            .anwsers.mt-2
+                                              label.container-radio
+                                                | Highly unnecessary	 
+                                                input(type='radio'  name="questions[" + question.id + "][" + node.name + "][" + buildTreeLeaf.name + "]" value="1" required)
+                                                span.checkmark
+
+                                              label.container-radio
+                                                | Unnecessary
+                                                input(type='radio'  name="questions[" + question.id + "][" + node.name + "][" + buildTreeLeaf.name + "]" value="2")
+                                                span.checkmark
+
+                                              label.container-radio
+                                                | Neutral
+                                                input(type='radio'  name="questions[" + question.id + "][" + node.name + "][" + buildTreeLeaf.name + "]" value="3")
+                                                span.checkmark
+
+                                              label.container-radio
+                                                | Necessary
+                                                input(type='radio'  name="questions[" + question.id + "][" + node.name + "][" + buildTreeLeaf.name + "]" value="4")
+                                                span.checkmark
+                                              
+                                              label.container-radio
+                                                | Highly necessary
+                                                input(type='radio'  name="questions[" + question.id + "][" + node.name + "][" + buildTreeLeaf.name + "]" value="5")
+                                                span.checkmark
+                              
+                              div.see-more-btn() Read more
+
+                               
+                
+                // comments
+                .comments-data.mt-3
+                  // label
+                  .comments-data-label.font-weight-bold.text-underline
+                    | III - Participants options
+                  // final question
+                  .question-1.mt-2
+                    .title 1) How do you rate the risk on your privacy after installing 
+                      span 
+                        b #{question.name} 
+                      spann app?
+                    // anwsers
+                    .anwsers.mt-2
+                      label.container-radio
+                        | Very low
+                        input(type='radio'  name="questions[" + question.id + "][final]" value="1" required)
+                        span.checkmark
+
+                      label.container-radio
+                        | Low
+                        input(type='radio'  name="questions[" + question.id + "][final]" value="2")
+                        span.checkmark
+
+                      label.container-radio
+                        | Medium
+                        input(type='radio'  name="questions[" + question.id + "][final]" value="3")
+                        span.checkmark
+
+                      label.container-radio
+                        | High
+                        input(type='radio'  name="questions[" + question.id + "][final]" value="4")
+                        span.checkmark
+                      
+                      label.container-radio
+                        | Very High
+                        input(type='radio'  name="questions[" + question.id + "][final]" value="5")
+                        span.checkmark
+                
+                
+
+                  
+      
+              //-  // comments
+              //- .comments-data.mt-3
+              //-   // label
+              //-   .comments-data-label.font-weight-bold.text-underline
+              //-     | III - Participants comments
+              //-   // question
+              //-   .question-1.mt-3
+              //-     .title 1) In your opinion, what kind of categories violate users' privacy?
+              //-     // anwsers
+              //-     .anwsers.mt-2
+              //-       each category in categories
+              //-         label.container-checkbox
+              //-           | #{category.name}
+              //-           input(type='checkbox'  name="questions[" + question.id + "][category]" value=category._id)
+              //-           span.checkmark
+
+                
+              //-   // question 
+              //-   .question-1.mt-3
+              //-     .title 2) Do you have any other comments on this survey? Please comment below:
+              //-     textarea(name="questions[" + question.id + "][comment]", cols="30", rows="5")
+
+
+
+                //- .carousel-item
+                //-   img.d-block.w-100(src='...', alt='Third slide')
+
+                //- .carousel-item
+                //-   img.d-block.w-100(src='...', alt='Fourth slide')
+
+
+
+
+
+
+
+              //- a.carousel-control-prev(href='#carouselExampleControls', role='button', data-slide='prev')
+              //-   span.carousel-control-prev-icon(aria-hidden='true')
+              //-   span.sr-only Previous
+              //- a.carousel-control-next(href='#carouselExampleControls', role='button', data-slide='next')
+              //-   span.carousel-control-next-icon(aria-hidden='true')
+              //-   span.sr-only Next
+          
