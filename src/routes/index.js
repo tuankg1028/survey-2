@@ -12,11 +12,7 @@ router.use("/auth", authRouter);
 //   // [Middlewares.Auth.isUser],
 //   Controllers.Survey.getSurvey
 // );
-router.get(
-  "/",
-  // [Middlewares.Auth.isUser],
-  Controllers.Survey.getQuestions
-);
+router.get("/", [Middlewares.Auth.isUser], Controllers.Survey.getQuestions);
 router.post(
   "/handle-questions",
   [Middlewares.Auth.isUser],
@@ -44,5 +40,4 @@ router.post(
 );
 
 router.get("/users", Controllers.Survey.getUsers);
-router.post("/question/app-invalid", Controllers.Survey.getAppComment);
 module.exports = router;

@@ -32,16 +32,16 @@ var answerSchema = new Schema(
     questions: [
       {
         responses: [
-          { 
+          {
             name: {
               type: String,
               required: true
             },
             value: {
-              type: String, 
+              type: String,
               required: true
             }
-         }
+          }
         ]
       }
     ],

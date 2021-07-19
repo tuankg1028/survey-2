@@ -6,15 +6,16 @@ var schema = new Schema(
   {
     id: String,
     name: String,
-    lv1: { type: Map },
-    lv3: { type: Map },
+    lv1: { type: Object },
+    lv3: { type: Object },
     subItem: {
-      type: Map
+      type: Object
     },
     text: String
   },
   {
-    timestamps: true
+    timestamps: true,
+    toJSON: { virtuals: true }
   }
 );
 schema.plugin(findOrCreate);

@@ -1,248 +1,294 @@
 extends ../survey-layout
 block survey-content
-  input(type="hidden" name="token" value=token)
-  .question-desc.mt-3
-    .wrap-forms
-      <ul class="list-group pl-0">
-        <li class="list-group-item active" aria-current="true">Training</li>
-        <li class="list-group-item p-3">
-          //- | Do you trust these individuals with your data
+  form(action="/handle-questions", method="POST") 
+    input(type="hidden" name="currentStage" value=currentStage)
+    input(type="hidden" name="token" value=token)
+
+    .question-desc.mt-3
+      .wrap-forms
+        <ul class="list-group pl-0">
+          <li class="list-group-item active" aria-current="true">#{currentStage === "training" ? "Training" : "Testing"}</li>
+          <li class="list-group-item p-3">
+            //- | Do you trust these individuals with your data
+            each question, index in questions
+              <ul class="list-group pl-0 mt-3 wrap-question" questionId=#{question._id}>
+                <input type="hidden" name="answer-installation" value=#{question.responses.install}>
+                <input class="our-prediction" type="hidden" name=#{"questions[" + question._id + "][ourPrediction]"} value=#{question.ourPrediction} >
+                <li class="list-group-item p-3">
+                  | #{index + 1}. #{question.text}
+
+                  if(currentStage != "training") 
+                    // final question
+                    .question-1.mt-2
+                      .title.font-weight-bold The system has taken the following action: 
+                        span(style="color:#c80000") #{ourPrediction == 2 ? "maybe install" : (ourPrediction == 1 ? "install" : "non install")} 
+                        span the application.
+                      div Are you satisfied by the taken decision? Please select the following options:
+                      // anwsers
+                      .anwsers.mt-2
+                        label.container-radio
+                          | Yes
+                          input(type='radio' class="predict-question" name="questions[" + question._id + "][agreePredict]" value="1" required checked=question.responses.agreePredict == 1)
+                          span.checkmark
+
+                        label.container-radio
+                          | No
+                          input(type='radio' class="predict-question" name="questions[" + question._id + "][agreePredict]" value="0" checked=question.responses.agreePredict == 0)
+                          span.checkmark
+                      //- Don't agree wtih prediction
+                      if(question.responses.agreePredict == 0)
+                        <div class="question-1 mt-2 question-installed">
+                          <div class="title font-weight-bold">Do you want to install this application? Please select the following options:</div>
+                          <div class="anwsers mt-2">
+                            //- YES
+                            if(question.responses.ourPrediction == 1)
+                            else 
+                              <label class="container-radio">Yes<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="1" required="required" #{lastQuestion.responses.install==1 ? "checked" : ""}><span class="checkmark"></span></label>
+                            //- NO
+                            if(question.responses.ourPrediction == 0)
+                            else 
+                              <label class="container-radio">No<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="0" required="required" #{lastQuestion.responses.install==0 ? "checked" : ""}><span class="checkmark"></span></label>
+                            //- MAYBE
+                            if(question.responses.ourPrediction == 2)
+                            else 
+                              <label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="2" required="required" #{lastQuestion.responses.install==2 ? "checked" : ""}><span class="checkmark"></span></label>
+                              //- #{
+                              //-   ourPrediction == 0
+                              //-     ? ""
+                              //-     : `<label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="0" required="required" ${
+                              //-         installtionAnswer == 0 && installtionAnswer !== ""
+                              //-           ? "checked"
+                              //-           : ""
+                              //-       } ><span class="checkmark"></span></label>`
+                              //- }
+                              //- #{
+                              //-   ourPrediction == 2
+                              //-     ? ""
+                              //-     : `<label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="2" required="required" ${
+                              //-         installtionAnswer == 2 ? "checked" : ""
+                              //-       } ><span class="checkmark"></span></label>`
+                              //- }
+                          </div>
+                      </div>
+                  else 
+                    // final question
+                    .question-1.mt-2
+                      //- .title.font-weight-bold 5. Do you want to install this application? Please select the following options:
+                      // anwsers
+                      .anwsers.mt-2
+                        label.container-radio
+                          | Yes
+                          input(type='radio' class="final-question" name="questions[" + question._id + "][install]" value="1" required checked=question.responses.install == 1)
+                          span.checkmark
+
+                        label.container-radio
+                          | No
+                          input(type='radio' class="final-question" name="questions[" + question._id + "][install]" value="0" checked=question.responses.install == 0)
+                          span.checkmark
+
+                        label.container-radio
+                          | Maybe
+                          input(type='radio' class="final-question" name="questions[" + question._id + "][install]" value="2" checked=question.responses.install == 2)
+                          span.checkmark
+                </li>
+
+              </ul>
+            //- <table class="table mt-4">
+            //-   <thead>
+            //-     <tr>
+            //-       <th scope="col"></th>
+            //-       <th scope="col"></th>
+            //-       <th scope="col">Not at all</th>
+            //-       <th scope="col">No</th>
+            //-       <th scope="col">Neutral</th>
+            //-       <th scope="col">Yes</th>
+            //-       <th scope="col">Very much</th>
+            //-     </tr>
+            //-   </thead>
+            //-   <tbody>
+            //-     <tr>
+            //-       <th scope="row"></th>
+            //-       <td>Family members</td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-     </tr>
+            //-     <tr>
+            //-       <th scope="row"></th>
+            //-       <td>Doctors</td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-     </tr>
+            //-     <tr>
+            //-       <th scope="row"></th>
+            //-       <td>Nurses</td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-     </tr>
+            //-     <tr>
+            //-       <th scope="row"></th>
+            //-       <td>Insurance <br>Representatives</td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-       <td>
+            //-         <label class="container-checkbox">
+            //-           <input class="predict-question" type="checkbox" name="" value="0" />
+            //-           <span class="checkmark"> </span>
+            //-         </label>
+            //-       </td>
+            //-     </tr>
+            //-   </tbody>
+            //- </table>
+          </li>
+        
+        </ul>
+
+        // satisfied
+        if(currentStage != "training")
           <ul class="list-group pl-0 mt-3">
             <li class="list-group-item p-3">
-              | HealthPal is an app to record your health status. You can use it for personal tracking (no need to share with your doctor). To function, HealthPal requires some permissions. Please select the permissions that you can grant.
+              | Are you satisfied with the system generated answer (i.e., the installation decision)? Please select the following options
               <div class="mt-4"> 
-                <label class="container-checkbox"> Access to file storage
-                  <input class="predict-question" type="checkbox" name="" value="0" />
+                <label class="container-radio"> Yes
+                  <input class="predict-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="1" required #{lastQuestion.responses.satisfaction==1 ? "checked" : ""}/>
                   <span class="checkmark"> </span>
                 </label>
-                <label class="container-checkbox"> Access to file storage
-                  <input class="predict-question" type="checkbox" name="" value="0" />
+                <label class="container-radio"> No
+                  <input class="predict-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="0" #{lastQuestion.responses.satisfaction==0 ? "checked" : ""}/>
                   <span class="checkmark"> </span>
                 </label>
-                <label class="container-checkbox"> Access to file storage
-                  <input class="predict-question" type="checkbox" name="" value="0" />
-                  <span class="checkmark"> </span>
-                </label>
-                <label class="container-checkbox"> Access to file storage
-                  <input class="predict-question" type="checkbox" name="" value="0" />
-                  <span class="checkmark"> </span>
-                </label>
-                <label class="container-checkbox"> Access to file storage
-                  <input class="predict-question" type="checkbox" name="" value="0" />
-                  <span class="checkmark"> </span>
-                </label>
-                <label class="container-checkbox"> Access to file storage
-                  <input class="predict-question" type="checkbox" name="" value="0" />
-                  <span class="checkmark"> </span>
-                </label>
-                <label class="container-checkbox"> Access to file storage
-                  <input class="predict-question" type="checkbox" name="" value="0" />
+                <label class="container-radio"> Maybe
+                  <input class="predict-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="2" #{lastQuestion.responses.satisfaction==2 ? "checked" : ""}/>
                   <span class="checkmark"> </span>
                 </label>
               </div>
+              <div class="mt-2">
+                <div class="font-weight-bold form-group">Can you explain about your option?</div>
+                <textarea class="form-control" style="width:100%" name=questions[#{lastQuestion._id}][finalComment] cols="30" rows="5" value="aaaa" required="">
+                  | #{lastQuestion.responses.finalComment}
+                </textarea>
+
+              </div>  
+                
             </li>
 
           </ul>
-          
-          //- <table class="table mt-4">
-          //-   <thead>
-          //-     <tr>
-          //-       <th scope="col"></th>
-          //-       <th scope="col"></th>
-          //-       <th scope="col">Not at all</th>
-          //-       <th scope="col">No</th>
-          //-       <th scope="col">Neutral</th>
-          //-       <th scope="col">Yes</th>
-          //-       <th scope="col">Very much</th>
-          //-     </tr>
-          //-   </thead>
-          //-   <tbody>
-          //-     <tr>
-          //-       <th scope="row"></th>
-          //-       <td>Family members</td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-     </tr>
-          //-     <tr>
-          //-       <th scope="row"></th>
-          //-       <td>Doctors</td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-     </tr>
-          //-     <tr>
-          //-       <th scope="row"></th>
-          //-       <td>Nurses</td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-     </tr>
-          //-     <tr>
-          //-       <th scope="row"></th>
-          //-       <td>Insurance <br>Representatives</td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-       <td>
-          //-         <label class="container-checkbox">
-          //-           <input class="predict-question" type="checkbox" name="" value="0" />
-          //-           <span class="checkmark"> </span>
-          //-         </label>
-          //-       </td>
-          //-     </tr>
-          //-   </tbody>
-          //- </table>
-        </li>
-       
-      </ul>
 
-      <ul class="list-group pl-0 mt-3">
-        <li class="list-group-item p-3">
-          | HealthPal is an app to record your health status. You can use it for personal tracking (no need to share with your doctor). To function, HealthPal requires some permissions. Please select the permissions that you can grant.
-          <div class="mt-4"> 
-            <label class="container-checkbox"> Access to file storage
-              <input class="predict-question" type="checkbox" name="" value="0" />
-              <span class="checkmark"> </span>
-            </label>
-            <label class="container-checkbox"> Access to file storage
-              <input class="predict-question" type="checkbox" name="" value="0" />
-              <span class="checkmark"> </span>
-            </label>
-            <label class="container-checkbox"> Access to file storage
-              <input class="predict-question" type="checkbox" name="" value="0" />
-              <span class="checkmark"> </span>
-            </label>
-            <label class="container-checkbox"> Access to file storage
-              <input class="predict-question" type="checkbox" name="" value="0" />
-              <span class="checkmark"> </span>
-            </label>
-            <label class="container-checkbox"> Access to file storage
-              <input class="predict-question" type="checkbox" name="" value="0" />
-              <span class="checkmark"> </span>
-            </label>
-            <label class="container-checkbox"> Access to file storage
-              <input class="predict-question" type="checkbox" name="" value="0" />
-              <span class="checkmark"> </span>
-            </label>
-            <label class="container-checkbox"> Access to file storage
-              <input class="predict-question" type="checkbox" name="" value="0" />
-              <span class="checkmark"> </span>
-            </label>
-          </div>
-        </li>
+        
+        <div style="display: flex;align-items: center;justify-content: space-between;" class="mt-5">
+          if(currentStage != "training")
+            <div><a href=/?currentStage=#{previousStage} class="login100-form-btn button-pre next-section-pre" style="color:black!important">Previous</a></div>
+          else 
+            <div></div> 
+          <div><input type="submit" class="next-section next-section-submit" value="Next"></div>
+        </div> 
 
-      </ul>
-
-      
-      <div style="display: flex;align-items: center;" class="mt-5">
-        <a class="login100-form-btn button-pre next-section-pre">Quay lai</a>
-        <a class="next-section next-section-submit">Gui</a>
-      <div> 
-
- 
+  
   // Modal
   #errorModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false")
     .modal-dialog(role="document")

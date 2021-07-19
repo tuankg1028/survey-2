@@ -5,8 +5,10 @@ import mongoose from "mongoose";
 import rq from "request-promise";
 import Utils from "../utils";
 import Services from "../services";
-import constants from "../utils/constants";
+import * as constants from "../utils/constants";
 
+const TOTAL_TRAINING = 5;
+const TOTAL_TESTING = 8;
 class SurveyController {
   async getSurvey(req, res, next) {
     try {
@@ -139,14 +141,94 @@ class SurveyController {
       next(error);
     }
   }
-
   async getQuestions(req, res, next) {
     try {
       const user = req.user;
+      let questionIds;
 
-      const token = req.session.token;
+      const refreshUser = await Models.User.findById(user.id);
+      const currentStage = req.query.currentStage || refreshUser.nextStage;
+      const nextStage = Utils.Question.getNextStage(currentStage);
+      const previousStage = Utils.Question.getPreviousStage(currentStage);
+
+      if (refreshUser.questionIds && refreshUser.questionIds.length)
+        questionIds = refreshUser.questionIds;
+      else {
+        let tranningIds = await Models.Question.find()
+          .limit(TOTAL_TRAINING)
+          .select("_id");
+        tranningIds = _.map(tranningIds, "_id");
+
+        let testingIds = await Models.Question.find({
+          _id: {
+            $nin: tranningIds
+          }
+        })
+          .limit(TOTAL_TESTING - 4)
+          .select("_id");
+        testingIds = _.map(testingIds, "_id");
+
+        questionIds = [
+          ...tranningIds,
+          // test 1
+          ...testingIds.splice(0, 2),
+          ...tranningIds.slice(0, 1),
+          // test 2
+          ...testingIds.splice(0, 2),
+          ...tranningIds.slice(1, 2),
+          // test 3
+          ...testingIds.splice(0, 2),
+          ...tranningIds.slice(2, 3),
+          // test 4
+          ...testingIds.splice(0, 2),
+          ...tranningIds.slice(3, 4)
+        ];
+
+        await Models.User.updateOne(
+          {
+            _id: user.id
+          },
+          {
+            $set: {
+              questionIds
+            }
+          },
+          {}
+        );
+      }
+      let questions = await Utils.Question.getQuestionsByStage(
+        questionIds,
+        refreshUser,
+        currentStage
+      );
+
+      const questionsAnswered = refreshUser.questions;
+
+      // map question to answered
+      questions = questions.map(question => {
+        const questionAnswered = questionsAnswered.find(
+          item => item._id.toString() === question._id.toString()
+        );
+
+        let responses = {};
+        if (questionAnswered) {
+          let { responses: responsesQuestion } = questionAnswered.toJSON();
+
+          responses = responsesQuestion.reduce((acc, item) => {
+            acc[item.name] = item.value;
+
+            return acc;
+          }, {});
+        }
+
+        return { ...question, responses };
+      });
+
       res.render("survey/templates/survey-question", {
-        token
+        questions,
+        lastQuestion: _.last(questions),
+        currentStage,
+        previousStage
       });
     } catch (error) {
       next(error);
@@ -155,20 +237,12 @@ class SurveyController {
 
   async handleQuestions(req, res, next) {
     try {
-      const user = req.user;
-      const { questions } = req.body;
+      const { id: userId } = req.user;
+      const { questions, currentStage } = req.body;
 
-      let awnser = await Models.Answer.findOne({
-        userId: user.id
-      });
-
-      if (!awnser)
-        awnser = await Models.Answer.create({
-          userId: user.id,
-          questions: []
-        });
-
-      const { questions: oldQuestions } = awnser;
+      const user = await Models.User.findById(userId);
+      const { questions: oldQuestions } = user;
+      const nextStage = Utils.Question.getNextStage(currentStage);
 
       // get answers
       const newQuestions = [...oldQuestions];
@@ -184,9 +258,9 @@ class SurveyController {
             value: answerValue
           });
         }
-        console.log(1, answerData);
+
         const indexQuestion = newQuestions.findIndex(
-          item => item.id.toString() === questionId
+          item => item._id.toString() === questionId
         );
         if (~indexQuestion) {
           newQuestions[indexQuestion].responses = answerData;
@@ -199,19 +273,22 @@ class SurveyController {
       }
 
       // update anwsers
-      await Models.Answer.updateOne(
+      await Models.User.updateOne(
         {
-          _id: awnser.id
+          _id: userId
         },
         {
           $set: {
+            nextStage: nextStage,
             questions: newQuestions
           }
         },
         {}
       );
 
-      res.json({});
+      return nextStage === constants.STAGES.end
+        ? res.redirect("/success")
+        : res.redirect("/");
     } catch (error) {
       next(error);
     }
@@ -513,63 +590,6 @@ class SurveyController {
           ourPrediction
         });
       }, 3);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async getAppComment(req, res, next) {
-    try {
-      let { data: apps } = req.body;
-      apps = JSON.parse(apps);
-
-      const questions = [];
-      for (let i = 0; i < apps.length; i++) {
-        const app = apps[i];
-        let question = await Models.App.findById(app.appId).cache(
-          60 * 60 * 24 * 30
-        ); // 1 month;
-        question = question.toJSON();
-
-        if (!question.personalDataTypes || !question.personalDataTypes.length) {
-          let apis = await Promise.all(
-            question.nodes.map(Utils.Function.getAPIFromNode)
-          );
-          apis = _.uniqBy(apis, "name");
-
-          const groupApis = _.groupBy(apis, "parent");
-
-          let personalDataTypes = [];
-          for (const personalDataTypeId in groupApis) {
-            const parent = await Models.Tree.findById(personalDataTypeId);
-
-            const personalDataTypeApiIds = groupApis[personalDataTypeId];
-
-            const personalDataTypeApis = await Promise.all(
-              personalDataTypeApiIds.map(id => Models.Tree.findById(id))
-            );
-
-            personalDataTypes.push({
-              name: parent.name,
-              apis: personalDataTypeApis
-            });
-          }
-
-          question.personalDataTypes = personalDataTypes;
-          await Models.App.updateOne(
-            { _id: id },
-            { $set: { personalDataTypes } }
-          ).then(console.log);
-        }
-
-        questions.push({
-          ...question,
-          ...app
-        });
-      }
-      res.render("survey/templates/survey-app-comment-ajax", {
-        questions
-      });
     } catch (error) {
       next(error);
     }

@@ -9,8 +9,8 @@ async function main() {
   await Models.Question.deleteMany({});
 
   questionJson.forEach(question => {
-    question.text = `You are playing ${question.name}. Do you allow to share your ${question.lv3.name} to collect your ${question.subItem.name}? (Information collected)`;
+    // question.text = `You are playing ${question.name}. Do you allow to share your ${question.lv3.name} to collect your ${question.subItem.name}? (Information collected)`;
     Models.Question.insertMany([question]);
   });
 }
-// main();
+main();

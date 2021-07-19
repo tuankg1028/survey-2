@@ -70,9 +70,7 @@ class AuthController {
 
       let user = await Models.User.findOne({
         email
-      }).cache(
-        60 * 60 * 24 * 30
-      ); // 1 month;
+      }).cache(60 * 60 * 24 * 30); // 1 month;
 
       if (!user) {
         req.session.errors = [

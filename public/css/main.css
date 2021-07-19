@@ -93,10 +93,6 @@ textarea {
   padding: 10px;
 }
 
-textarea:focus, input:focus {
-  border-color: transparent !important;
-}
-
 input:focus::-webkit-input-placeholder { color:transparent; }
 input:focus:-moz-placeholder { color:transparent; }
 input:focus::-moz-placeholder { color:transparent; }
@@ -358,9 +354,9 @@ b {
   font-family: Montserrat-Bold;
   font-size: 15px;
   line-height: 1.5;
-  color: #fff;
+  color: #fff!important;
   text-transform: uppercase;
-
+  cursor: pointer;
   width: 100%;
   height: 50px;
   border-radius: 25px;

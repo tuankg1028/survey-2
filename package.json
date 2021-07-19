@@ -9,20 +9,7 @@
     "build": "npm run clean && npm run build-babel",
     "start": "node dist/app.js",
     "dev": "babel-watch src/app.js",
-    "seed": "babel-watch src/seeder.js",
-    "create-questions123123123sdad": "babel-node --max_old_space_size=8192 createQuestion.js",
-    "create-files": "babel --max_old_space_size=8192 createTxtFile.js",
-    "export": "babel-watch --max_old_space_size=8192 export.js",
-    "export-distance": "babel-watch --max_old_space_size=8192 exportDistance.js",
-    "export-distanceLeafNodes": "babel-watch --max_old_space_size=8192 exportDistanceLeafNodesAndFirstLevel.js",
-    "statistics": "babel-watch --max_old_space_size=8192 statistics.js",
-    "statistics_stage1": "babel-watch --max_old_space_size=8192 statistics_stage1.js",
-    "statistics_stage2": "babel-watch --max_old_space_size=8192 statistics_stage2.js",
-    "statistics_stage3": "babel-watch --max_old_space_size=8192 statistics_stage3.js",
-    "statistics_stage_expert": "babel-watch --max_old_space_size=8192 statistics_stage_expert.js",
-    "thirdFile": "babel-watch --max_old_space_size=8192 thirdFile.js",
-    "countingRisk": "babel-watch --max_old_space_size=8192 countingRisk.js",
-    "exportingUsers": "babel-watch --max_old_space_size=8192 export-user.js"
+    "seed": "babel-watch src/seeder.js"
   },
   "heroku-prebuild": "rm -rf node_modules",
   "dependencies": {

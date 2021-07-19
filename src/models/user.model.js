@@ -14,13 +14,24 @@ var userSchema = new Schema(
     age: Number,
     groupSurvey: String,
     questionIds: [String],
+    nextStage: {
+      type: String,
+      default: "training"
+    },
     questions: [
       {
-        name: {
-          type: String,
-          required: true
-        },
-        response: { type: String, required: true }
+        responses: [
+          {
+            name: {
+              type: String,
+              required: true
+            },
+            value: {
+              type: String,
+              required: true
+            }
+          }
+        ]
       }
     ],
     isAnswerd: {

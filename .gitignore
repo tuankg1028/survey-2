@@ -1,0 +1,16 @@
+node_modules
+package-lock.json
+
+dist/
+yarn.lock
+.idea
+.vscode
+output-apps
+# source/
+# source2/
+temp/
+source2/
+output-apps/
+
+# survey
+survey/data
