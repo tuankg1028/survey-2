@@ -171,16 +171,16 @@ class SurveyController {
         questionIds = [
           ...tranningIds,
           // test 1
-          ...testingIds.splice(0, 5),
+          ...testingIds.splice(0, 4),
           ...tranningIds.slice(0, 1),
           // test 2
-          ...testingIds.splice(0, 5),
+          ...testingIds.splice(0, 4),
           ...tranningIds.slice(1, 2),
           // test 3
-          ...testingIds.splice(0, 5),
+          ...testingIds.splice(0, 4),
           ...tranningIds.slice(2, 3),
           // test 4
-          ...testingIds.splice(0, 5),
+          ...testingIds.splice(0, 4),
           ...tranningIds.slice(3, 4)
         ];
 
