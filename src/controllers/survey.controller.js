@@ -202,25 +202,20 @@ class SurveyController {
         currentStage
       );
 
-      const questionsAnswered = refreshUser.questions;
+      const questionsAnswered =
+        currentStage === constants.STAGES.training
+          ? refreshUser.questions.slice(0, 20)
+          : refreshUser.questions.slice(20, 40);
 
       // map question to answered
       questions = questions.map(question => {
-        const questionAnsweredIndex = questionsAnswered.lastIndexOf(
+        const questionAnswered = questionsAnswered.find(
           item => item._id.toString() === question._id.toString()
         );
 
         let responses = {};
-        if (
-          ~questionAnsweredIndex &&
-          ((currentStage === constants.STAGES.training &&
-            questionAnsweredIndex < 10) ||
-            (currentStage !== constants.STAGES.training &&
-              questionAnsweredIndex >= 10))
-        ) {
-          let { responses: responsesQuestion } = questionsAnswered[
-            questionAnsweredIndex
-          ].toJSON();
+        if (questionAnswered) {
+          let { responses: responsesQuestion } = questionAnswered.toJSON();
 
           responses = responsesQuestion.reduce((acc, item) => {
             acc[item.name] = item.value;
