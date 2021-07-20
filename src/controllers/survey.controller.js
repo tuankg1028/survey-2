@@ -263,11 +263,9 @@ class SurveyController {
           item => item._id.toString() === questionId
         );
         if (
-          (~indexQuestion &&
-            (currentStage === constants.STAGES.training ||
-              indexQuestion < 10)) ||
-          currentStage !== constants.STAGES.training ||
-          indexQuestion >= 10
+          ~indexQuestion &&
+          ((currentStage === constants.STAGES.training && indexQuestion < 10) ||
+            (currentStage !== constants.STAGES.training && indexQuestion >= 10))
         ) {
           newQuestions[indexQuestion].responses = answerData;
         } else {
