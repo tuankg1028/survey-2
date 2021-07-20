@@ -206,7 +206,6 @@ class SurveyController {
         currentStage === constants.STAGES.training
           ? refreshUser.questions.slice(0, 20)
           : refreshUser.questions.slice(20, 40);
-
       // map question to answered
       questions = questions.map(question => {
         const questionAnswered = questionsAnswered.find(
@@ -262,9 +261,13 @@ class SurveyController {
           });
         }
 
-        const indexQuestion = newQuestions.lastIndexOf(
-          item => item._id.toString() === questionId
+        const indexQuestion = newQuestions.findIndex(
+          (item, index) =>
+            item._id.toString() === questionId &&
+            ((currentStage === constants.STAGES.training && index < 10) ||
+              (currentStage !== constants.STAGES.training && index >= 10))
         );
+
         if (
           ~indexQuestion &&
           ((currentStage === constants.STAGES.training && indexQuestion < 10) ||
