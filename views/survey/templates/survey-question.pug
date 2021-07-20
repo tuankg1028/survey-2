@@ -43,15 +43,15 @@ block survey-content
                             //- YES
                             if(question.responses.ourPrediction == 1)
                             else 
-                              <label class="container-radio">Yes<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="1" required="required" #{lastQuestion.responses.install==1 ? "checked" : ""}><span class="checkmark"></span></label>
+                              <label class="container-radio">Yes<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="1" required="required" #{question.responses.install==1 ? "checked" : ""}><span class="checkmark"></span></label>
                             //- NO
                             if(question.responses.ourPrediction == 0)
                             else 
-                              <label class="container-radio">No<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="0" required="required" #{lastQuestion.responses.install==0 ? "checked" : ""}><span class="checkmark"></span></label>
+                              <label class="container-radio">No<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="0" required="required" #{question.responses.install==0 ? "checked" : ""}><span class="checkmark"></span></label>
                             //- MAYBE
                             if(question.responses.ourPrediction == 2)
                             else 
-                              <label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="2" required="required" #{lastQuestion.responses.install==2 ? "checked" : ""}><span class="checkmark"></span></label>
+                              <label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="2" required="required" #{question.responses.install==2 ? "checked" : ""}><span class="checkmark"></span></label>
                           </div>
                         </div>
                   else 

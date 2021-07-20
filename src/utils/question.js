@@ -64,7 +64,7 @@ async function getQuestionsByStage(questionIds, user, stage = "training") {
     questions = predictions.map((prediction, index) => {
       return {
         ...questions[index],
-        ourPrediction: prediction
+        ourPrediction: 0
       };
     });
   }
