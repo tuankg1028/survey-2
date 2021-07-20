@@ -2739,7 +2739,7 @@ const getOurPredictionApproach1 = async (
     tranningIds.map(id => Models.Question.findById(id).cache(60 * 60 * 24 * 30))
   );
 
-  const tranningSet = tranningQuestions.map(tranningQuestion => {
+  const tranningSet = tranningQuestions.map((tranningQuestion, index) => {
     const interactions = constants.interactions.map(item => {
       return _.includes(
         [tranningQuestion.id, tranningQuestion.lv1.id, tranningQuestion.lv3.id],
@@ -2764,9 +2764,7 @@ const getOurPredictionApproach1 = async (
     });
 
     // get answer for this question
-    const userAnswerQuestion = userAnswer.questions.find(
-      question => question._id.toString() == tranningQuestion._id.toString()
-    );
+    const userAnswerQuestion = userAnswer.questions[index];
 
     if (!userAnswerQuestion) throw Error("Answer not found");
 

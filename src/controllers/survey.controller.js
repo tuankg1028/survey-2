@@ -206,13 +206,21 @@ class SurveyController {
 
       // map question to answered
       questions = questions.map(question => {
-        const questionAnswered = questionsAnswered.find(
+        const questionAnsweredIndex = questionsAnswered.lastIndexOf(
           item => item._id.toString() === question._id.toString()
         );
 
         let responses = {};
-        if (questionAnswered) {
-          let { responses: responsesQuestion } = questionAnswered.toJSON();
+        if (
+          ~questionAnsweredIndex &&
+          ((currentStage === constants.STAGES.training &&
+            questionAnsweredIndex < 10) ||
+            (currentStage !== constants.STAGES.training &&
+              questionAnsweredIndex >= 10))
+        ) {
+          let { responses: responsesQuestion } = questionsAnswered[
+            questionAnsweredIndex
+          ].toJSON();
 
           responses = responsesQuestion.reduce((acc, item) => {
             acc[item.name] = item.value;
