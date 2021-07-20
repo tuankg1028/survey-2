@@ -4,25 +4,25 @@ import Models from "../models";
 async function getQuestionsByStage(questionIds, user, stage = "training") {
   let stageQuestionIds = [];
   let algorithm;
-  const trainingIds = questionIds.slice(0, 5);
+  const trainingIds = questionIds.slice(0, 20);
   switch (stage) {
     case STAGES.testing1:
       algorithm = "SVM";
-      stageQuestionIds = questionIds.slice(5, 7);
+      stageQuestionIds = questionIds.slice(20, 25);
       break;
     case STAGES.testing2:
       algorithm = "GradientBoostingClassifier";
-      stageQuestionIds = questionIds.slice(7, 9);
+      stageQuestionIds = questionIds.slice(25, 30);
       break;
     case STAGES.testing3:
       algorithm = "AdaBoostClassifier";
-      stageQuestionIds = questionIds.slice(9, 11);
+      stageQuestionIds = questionIds.slice(30, 35);
 
       break;
     case STAGES.end:
     case STAGES.testing4:
       algorithm = "GradientBoostingRegressor";
-      stageQuestionIds = questionIds.slice(11, 13);
+      stageQuestionIds = questionIds.slice(35, 40);
       break;
     default:
       stageQuestionIds = trainingIds;

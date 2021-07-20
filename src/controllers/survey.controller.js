@@ -7,8 +7,8 @@ import Utils from "../utils";
 import Services from "../services";
 import * as constants from "../utils/constants";
 
-const TOTAL_TRAINING = 5;
-const TOTAL_TESTING = 8;
+const TOTAL_TRAINING = 20;
+const TOTAL_TESTING = 20;
 class SurveyController {
   async getSurvey(req, res, next) {
     try {
@@ -171,16 +171,16 @@ class SurveyController {
         questionIds = [
           ...tranningIds,
           // test 1
-          ...testingIds.splice(0, 2),
+          ...testingIds.splice(0, 5),
           ...tranningIds.slice(0, 1),
           // test 2
-          ...testingIds.splice(0, 2),
+          ...testingIds.splice(0, 5),
           ...tranningIds.slice(1, 2),
           // test 3
-          ...testingIds.splice(0, 2),
+          ...testingIds.splice(0, 5),
           ...tranningIds.slice(2, 3),
           // test 4
-          ...testingIds.splice(0, 2),
+          ...testingIds.splice(0, 5),
           ...tranningIds.slice(3, 4)
         ];
 
