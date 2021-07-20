@@ -19,12 +19,6 @@ router.post(
   Controllers.Survey.handleQuestions
 );
 
-router.get(
-  "/question/:id/:index",
-  [Middlewares.Auth.isUser],
-  Controllers.Survey.getQuestion
-);
-
 router.get("/success", Controllers.Survey.getSuccess);
 
 router.post(
