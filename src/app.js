@@ -17,16 +17,16 @@ const logger = require("morgan");
 const session = require("express-session");
 const redisClient = require("./configs/redis.config").default;
 var MongoDBStore = require("connect-mongodb-session")(session);
-// const redisStore = require("connect-redis")(session);
+const redisStore = require("connect-redis")(session);
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 
 const app = express();
-// const store = new redisStore({
-//   client: redisClient,
-//   ttl: 86400
-// });
+const store = new redisStore({
+  client: redisClient,
+  ttl: 86400
+});
 
 // const store = new MongoDBStore({
 //   uri: process.env.MONGODB_URL,
@@ -62,8 +62,8 @@ app.use(
     resave: true,
     saveUninitialized: true,
     secret: "somesecret",
-    cookie: { maxAge: 60000 * 60 * 12 } // 12h
-    // store
+    cookie: { maxAge: 60000 * 60 * 12 }, // 12h
+    store
   })
 );
 Sentry.init({
