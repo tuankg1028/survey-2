@@ -12,8 +12,8 @@ block survey-content
             //- | Do you trust these individuals with your data
             each question, index in questions
               <ul class="list-group pl-0 mt-3 wrap-question" questionId=#{question._id}>
-                <input type="hidden" name="answer-installation" value=#{question.responses.install}>
-                <input class="our-prediction" type="hidden" name=#{"questions[" + question._id + "][ourPrediction]"} value=#{question.ourPrediction} >
+                <input type="hidden" name="answer-installation" value=#{question.responses.install} />
+                <input class="our-prediction" type="hidden" name=#{"questions[" + question._id + "][ourPrediction]"} value=#{question.ourPrediction} />
                 <li class="list-group-item p-3">
                   | #{index + 1}. #{question.text}
 
@@ -21,7 +21,7 @@ block survey-content
                     // final question
                     .question-1.mt-2
                       .title.font-weight-bold The system has taken the following action: 
-                        span(style="color:#c80000") #{ourPrediction == 2 ? "maybe install" : (ourPrediction == 1 ? "install" : "non install")} 
+                        span(style="color:#c80000") #{question.ourPrediction == 2 ? "maybe install" : (question.ourPrediction == 1 ? "install" : "non install")} 
                         span the application.
                       div Are you satisfied by the taken decision? Please select the following options:
                       // anwsers
@@ -52,24 +52,8 @@ block survey-content
                             if(question.responses.ourPrediction == 2)
                             else 
                               <label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="2" required="required" #{lastQuestion.responses.install==2 ? "checked" : ""}><span class="checkmark"></span></label>
-                              //- #{
-                              //-   ourPrediction == 0
-                              //-     ? ""
-                              //-     : `<label class="container-radio">No<input class="final-question" type="radio" name="questions[${appId}][install]" value="0" required="required" ${
-                              //-         installtionAnswer == 0 && installtionAnswer !== ""
-                              //-           ? "checked"
-                              //-           : ""
-                              //-       } ><span class="checkmark"></span></label>`
-                              //- }
-                              //- #{
-                              //-   ourPrediction == 2
-                              //-     ? ""
-                              //-     : `<label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[${appId}][install]" value="2" required="required" ${
-                              //-         installtionAnswer == 2 ? "checked" : ""
-                              //-       } ><span class="checkmark"></span></label>`
-                              //- }
                           </div>
-                      </div>
+                        </div>
                   else 
                     // final question
                     .question-1.mt-2
@@ -93,7 +77,69 @@ block survey-content
                 </li>
 
               </ul>
-            //- <table class="table mt-4">
+            
+          </li>
+        
+        </ul>
+
+        // satisfied
+        if(currentStage != "training")
+          <ul class="list-group pl-0 mt-3">
+            <li class="list-group-item p-3">
+              | Are you satisfied with the system generated answer (i.e., the installation decision)? Please select the following options
+              <div class="mt-4"> 
+                <label class="container-radio"> Yes
+                  <input class="predict-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="1" required #{lastQuestion.responses.satisfaction==1 ? "checked" : ""} />
+                  <span class="checkmark"> </span>
+                </label>
+                <label class="container-radio"> No
+                  <input class="predict-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="0" #{lastQuestion.responses.satisfaction==0 ? "checked" : ""} />
+                  <span class="checkmark"> </span>
+                </label>
+                <label class="container-radio"> Maybe
+                  <input class="predict-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="2" #{lastQuestion.responses.satisfaction==2 ? "checked" : ""} />
+                  <span class="checkmark"> </span>
+                </label>
+              </div>
+              <div class="mt-2">
+                <div class="font-weight-bold form-group">Can you explain about your option?</div>
+                <textarea class="form-control" style="width:100%" name=questions[#{lastQuestion._id}][finalComment] cols="30" rows="5" value="aaaa" required="">
+                  | #{lastQuestion.responses.finalComment}
+                </textarea>
+
+              </div>  
+                
+            </li>
+
+          </ul>
+
+        
+        <div style="display: flex;align-items: center;justify-content: space-between;" class="mt-5">
+          if(currentStage != "training")
+            <div><a href=/?currentStage=#{previousStage} class="login100-form-btn button-pre next-section-pre" style="color:black!important">Previous</a></div>
+          else 
+            <div></div> 
+          <div><input type="submit" class="next-section next-section-submit" value="Next"></div>
+        </div> 
+
+  
+  // Modal
+  #errorModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false")
+    .modal-dialog(role="document")
+      .modal-content
+        .modal-header
+          h5#exampleModalLabel.modal-title Error
+      
+        .modal-body
+          | Unfortunately something went wrong
+        .modal-footer
+          button.btn.btn-primary#btn-err(type="button" data-dismiss="modal") Try again
+
+block scriptsCustom
+  script(src='/js/question.js')
+
+
+  //- <table class="table mt-4">
             //-   <thead>
             //-     <tr>
             //-       <th scope="col"></th>
@@ -244,62 +290,3 @@ block survey-content
             //-     </tr>
             //-   </tbody>
             //- </table>
-          </li>
-        
-        </ul>
-
-        // satisfied
-        if(currentStage != "training")
-          <ul class="list-group pl-0 mt-3">
-            <li class="list-group-item p-3">
-              | Are you satisfied with the system generated answer (i.e., the installation decision)? Please select the following options
-              <div class="mt-4"> 
-                <label class="container-radio"> Yes
-                  <input class="predict-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="1" required #{lastQuestion.responses.satisfaction==1 ? "checked" : ""}/>
-                  <span class="checkmark"> </span>
-                </label>
-                <label class="container-radio"> No
-                  <input class="predict-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="0" #{lastQuestion.responses.satisfaction==0 ? "checked" : ""}/>
-                  <span class="checkmark"> </span>
-                </label>
-                <label class="container-radio"> Maybe
-                  <input class="predict-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="2" #{lastQuestion.responses.satisfaction==2 ? "checked" : ""}/>
-                  <span class="checkmark"> </span>
-                </label>
-              </div>
-              <div class="mt-2">
-                <div class="font-weight-bold form-group">Can you explain about your option?</div>
-                <textarea class="form-control" style="width:100%" name=questions[#{lastQuestion._id}][finalComment] cols="30" rows="5" value="aaaa" required="">
-                  | #{lastQuestion.responses.finalComment}
-                </textarea>
-
-              </div>  
-                
-            </li>
-
-          </ul>
-
-        
-        <div style="display: flex;align-items: center;justify-content: space-between;" class="mt-5">
-          if(currentStage != "training")
-            <div><a href=/?currentStage=#{previousStage} class="login100-form-btn button-pre next-section-pre" style="color:black!important">Previous</a></div>
-          else 
-            <div></div> 
-          <div><input type="submit" class="next-section next-section-submit" value="Next"></div>
-        </div> 
-
-  
-  // Modal
-  #errorModal.modal.fade(tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false")
-    .modal-dialog(role="document")
-      .modal-content
-        .modal-header
-          h5#exampleModalLabel.modal-title Error
-      
-        .modal-body
-          | Unfortunately something went wrong
-        .modal-footer
-          button.btn.btn-primary#btn-err(type="button" data-dismiss="modal") Try again
-
-block scriptsCustom
-  script(src='/js/question.js')
