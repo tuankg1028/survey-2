@@ -7,7 +7,7 @@ block survey-content
     .question-desc.mt-3
       .wrap-forms
         <ul class="list-group pl-0">
-          <li class="list-group-item active" aria-current="true">#{currentStage === "training" ? "Training" : "Testing"}</li>
+          <li class="list-group-item active" aria-current="true">#{currentStage === "training" ? "Training" : currentStage == "testing1" ? "Testing 1/4" : currentStage == "testing2" ? "Testing 2/4" : currentStage == "testing3" ? "Testing 3/4" : "Testing 4/4"} </li>
           <li class="list-group-item p-3">
             //- | Do you trust these individuals with your data
             each question, index in questions
