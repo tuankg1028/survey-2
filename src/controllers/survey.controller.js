@@ -259,10 +259,16 @@ class SurveyController {
           });
         }
 
-        const indexQuestion = newQuestions.findIndex(
+        const indexQuestion = newQuestions.lastIndexOf(
           item => item._id.toString() === questionId
         );
-        if (~indexQuestion) {
+        if (
+          (~indexQuestion &&
+            (currentStage === constants.STAGES.training ||
+              indexQuestion < 10)) ||
+          currentStage !== constants.STAGES.training ||
+          indexQuestion >= 10
+        ) {
           newQuestions[indexQuestion].responses = answerData;
         } else {
           newQuestions.push({
