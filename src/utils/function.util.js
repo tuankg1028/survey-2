@@ -2773,22 +2773,8 @@ const getOurPredictionApproach1 = async (
     let questionInstallation = userAnswerQuestion.responses.find(
       item => item.name === "install"
     );
-    if (!questionInstallation)
-      questionInstallation = userAnswerQuestion.responses.find(
-        item => item.name === "agreePredict"
-      );
 
-    if (!questionInstallation) throw Error("Answer not found");
-
-    let label;
-    const ourPrediction = userAnswerQuestion.responses.find(
-      item => item.name === "ourPrediction"
-    );
-    if (ourPrediction) {
-      label = ourPrediction.value;
-    } else {
-      label = questionInstallation.value;
-    }
+    const label = Number(questionInstallation.value);
 
     return [...interactions, ...permissions, ...collections, label];
   });
@@ -2813,7 +2799,7 @@ const getOurPredictionApproach1 = async (
       : 0;
   });
 
-  const testSet = [[...interactions, ...permissions, ...collections, "-1"]];
+  const testSet = [[...interactions, ...permissions, ...collections, -1]];
 
   // eslint-disable-next-line no-console
   console.log("Step 2 tranning and test: ", tranningSet, testSet);
