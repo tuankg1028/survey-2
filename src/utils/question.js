@@ -10,16 +10,17 @@ async function getQuestionsByStage(
   let stageQuestionIds = [];
   let algorithm;
   let trainingIds = questionIds.slice(0, 20);
+  let testingIds = questionIds.slice(20, 40);
   switch (stage) {
     case STAGES.testing1: {
       algorithm = "SVM";
       stageQuestionIds = [nextQuestionId];
       // stageQuestionIds = questionIds.slice(20, 25);
       // get extra tranning questions
-      const indexOfNextQuestion = questionIds.lastIndexOf(nextQuestionId);
+      const indexOfNextQuestion = testingIds.indexOf(nextQuestionId);
       trainingIds = [
         ...trainingIds,
-        ...questionIds.slice(19, indexOfNextQuestion)
+        ...questionIds.slice(20, TOTAL_TRAINING + indexOfNextQuestion)
       ];
       break;
     }
@@ -27,10 +28,10 @@ async function getQuestionsByStage(
       algorithm = "GradientBoostingClassifier";
       stageQuestionIds = [nextQuestionId];
       // stageQuestionIds = questionIds.slice(25, 30);
-      const indexOfNextQuestion = questionIds.lastIndexOf(nextQuestionId);
+      const indexOfNextQuestion = testingIds.indexOf(nextQuestionId);
       trainingIds = [
         ...trainingIds,
-        ...questionIds.slice(24, indexOfNextQuestion)
+        ...questionIds.slice(25, TOTAL_TRAINING + indexOfNextQuestion)
       ];
       break;
     }
@@ -38,10 +39,10 @@ async function getQuestionsByStage(
       algorithm = "AdaBoostClassifier";
       stageQuestionIds = [nextQuestionId];
       // stageQuestionIds = questionIds.slice(30, 35);
-      const indexOfNextQuestion = questionIds.lastIndexOf(nextQuestionId);
+      const indexOfNextQuestion = testingIds.indexOf(nextQuestionId);
       trainingIds = [
         ...trainingIds,
-        ...questionIds.slice(29, indexOfNextQuestion)
+        ...questionIds.slice(30, TOTAL_TRAINING + indexOfNextQuestion)
       ];
       break;
     }
@@ -51,10 +52,10 @@ async function getQuestionsByStage(
       // stageQuestionIds = questionIds.slice(35, 40);
       stageQuestionIds = [nextQuestionId];
 
-      const indexOfNextQuestion = questionIds.lastIndexOf(nextQuestionId);
+      const indexOfNextQuestion = testingIds.indexOf(nextQuestionId);
       trainingIds = [
         ...trainingIds,
-        ...questionIds.slice(34, indexOfNextQuestion)
+        ...questionIds.slice(35, TOTAL_TRAINING + indexOfNextQuestion)
       ];
       break;
     }
