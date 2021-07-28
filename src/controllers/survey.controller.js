@@ -1,8 +1,5 @@
 import Models from "../models";
 import _ from "lodash";
-import replaceall from "replaceall";
-import mongoose from "mongoose";
-import rq from "request-promise";
 import Utils from "../utils";
 import Services from "../services";
 import * as constants from "../utils/constants";
@@ -147,25 +144,52 @@ class SurveyController {
       let questionIds;
 
       const refreshUser = await Models.User.findById(user.id);
-      const currentStage = req.query.currentStage || refreshUser.nextStage;
-      const nextStage = Utils.Question.getNextStage(currentStage);
-      const previousStage = Utils.Question.getPreviousStage(currentStage);
+
+      // question
+      const currentQuestionId =
+        req.query.questionId || refreshUser.nextQuestionId;
+      const previousQuestionId = Utils.Question.getQuestionId(
+        currentQuestionId,
+        refreshUser.questionIds,
+        "previous"
+      );
+
+      const nextQuestionId = Utils.Question.getQuestionId(
+        currentQuestionId,
+        refreshUser.questionIds,
+        "next"
+      );
+
+      // stage
+      const currentStage = Utils.Question.getStageByQuestionId(
+        currentQuestionId,
+        refreshUser.questionIds
+      );
+      const previousStage = Utils.Question.getStageByQuestionId(
+        previousQuestionId,
+        refreshUser.questionIds
+      );
 
       if (refreshUser.questionIds && refreshUser.questionIds.length)
         questionIds = refreshUser.questionIds;
       else {
-        let tranningIds = await Models.Question.find()
-          .limit(TOTAL_TRAINING)
-          .select("_id");
+        let tranningIds = await Models.Question.aggregate([
+          { $sample: { size: TOTAL_TRAINING } },
+          { $project: { _id: 1 } }
+        ]);
         tranningIds = _.map(tranningIds, "_id");
 
-        let testingIds = await Models.Question.find({
-          _id: {
-            $nin: tranningIds
+        let testingIds = await Models.Question.aggregate([
+          { $sample: { size: TOTAL_TESTING - 4 } },
+          { $project: { _id: 1 } },
+          {
+            $match: {
+              _id: {
+                $nin: tranningIds
+              }
+            }
           }
-        })
-          .limit(TOTAL_TESTING - 4)
-          .select("_id");
+        ]);
         testingIds = _.map(testingIds, "_id");
 
         questionIds = [
@@ -196,16 +220,29 @@ class SurveyController {
           {}
         );
       }
+
       let questions = await Utils.Question.getQuestionsByStage(
         questionIds,
         refreshUser,
-        currentStage
+        currentStage,
+        currentQuestionId
+      );
+      const isShowComment =
+        currentStage !== constants.STAGES.training &&
+        Utils.Question.showComment(
+          currentQuestionId,
+          currentStage,
+          questionIds
+        );
+      const indexQuestionInStage = Utils.Question.getIndexOfQuestionInStage(
+        currentQuestionId,
+        questionIds
       );
 
       const questionsAnswered =
         currentStage === constants.STAGES.training
           ? refreshUser.questions.slice(0, 20)
-          : refreshUser.questions.slice(20, 40);
+          : refreshUser.questions.slice(20);
       // map question to answered
       questions = questions.map(question => {
         const questionAnswered = questionsAnswered.find(
@@ -229,8 +266,13 @@ class SurveyController {
       res.render("survey/templates/survey-question", {
         questions,
         lastQuestion: _.last(questions),
+        // question
+        previousQuestionId,
+        isShowComment,
+        // stage
         currentStage,
-        previousStage
+        previousStage,
+        indexQuestionInStage
       });
     } catch (error) {
       next(error);
@@ -243,8 +285,26 @@ class SurveyController {
       const { questions, currentStage } = req.body;
 
       const user = await Models.User.findById(userId);
-      const { questions: oldQuestions } = user;
-      const nextStage = Utils.Question.getNextStage(currentStage);
+      let {
+        questions: oldQuestions,
+        questionIds,
+        nextQuestionId: currentQuestionId
+      } = user;
+
+      currentQuestionId =
+        req.query.questionId ||
+        _.last(Object.keys(questions)) ||
+        currentQuestionId;
+
+      const nextQuestionId = Utils.Question.getQuestionId(
+        currentQuestionId,
+        questionIds,
+        "next"
+      );
+      const nextStage = Utils.Question.getStageByQuestionId(
+        nextQuestionId,
+        questionIds
+      );
 
       // get answers
       const newQuestions = [...oldQuestions];
@@ -289,7 +349,8 @@ class SurveyController {
         },
         {
           $set: {
-            nextStage: nextStage,
+            nextStage,
+            nextQuestionId,
             questions: newQuestions
           }
         },

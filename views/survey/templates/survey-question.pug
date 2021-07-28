@@ -7,21 +7,30 @@ block survey-content
     .question-desc.mt-3
       .wrap-forms
         <ul class="list-group pl-0">
-          <li class="list-group-item active" aria-current="true">#{currentStage === "training" ? "Training" : currentStage == "testing1" ? "Testing 1/4" : currentStage == "testing2" ? "Testing 2/4" : currentStage == "testing3" ? "Testing 3/4" : "Testing 4/4"} </li>
+          <li class="list-group-item active" aria-current="true">#{currentStage === "training" ? "Training phase" : currentStage == "testing1" ? "Testing phase: 1/4" : currentStage == "testing2" ? "Testing 2/4" : currentStage == "testing3" ? "Testing 3/4" : "Testing 4/4"} </li>
           <li class="list-group-item p-3">
+            if(currentStage == "training")
+              h6.text-center(style="text-transform: capitalize;") 
+                span.pagingInfo Questions: 
+                  <span style="color: #FF9800; font-size: 24px">20</span> / 20
+            else
+              h6.text-center(style="text-transform: capitalize;") 
+                  span.pagingInfo Questions : 
+                    <span style="color: #FF9800; font-size: 24px">#{indexQuestionInStage + 1}</span> / 5
+                
             //- | Do you trust these individuals with your data
             each question, index in questions
               <ul class="list-group pl-0 mt-3 wrap-question" questionId=#{question._id}>
-                <input type="hidden" name="answer-installation" value=#{question.responses.install} />
-                <input class="our-prediction" type="hidden" name=#{"questions[" + question._id + "][ourPrediction]"} value=#{question.ourPrediction} />
+                <input type="hidden" name="answer-installation" value=#{question.responses.install} >
+                <input class="our-prediction" type="hidden" name=#{"questions[" + question._id + "][ourPrediction]"} value=#{question.ourPrediction} >
                 <li class="list-group-item p-3">
-                  | #{index + 1}. #{question.text}
+                  | #{index + 1}. !{question.text}
 
-                  if(currentStage != "training") 
+                  if(currentStage != "training")
                     // final question
                     .question-1.mt-2
                       .title.font-weight-bold The system has taken the following action: 
-                        span(style="color:#c80000") #{question.ourPrediction == 2 ? "maybe install" : (question.ourPrediction == 1 ? "install" : "non install")} 
+                        span(style="color:#c80000") #{question.ourPrediction == 2 ? "With restriction" : (question.ourPrediction == 1 ? "Yes (Without restriction)" : "No")} 
                         span the application.
                       div Are you satisfied by the taken decision? Please select the following options:
                       // anwsers
@@ -43,7 +52,7 @@ block survey-content
                             //- YES
                             if(question.responses.ourPrediction == 1)
                             else 
-                              <label class="container-radio">Yes<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="1" required="required" #{question.responses.install==1 ? "checked" : ""}><span class="checkmark"></span></label>
+                              <label class="container-radio">Yes (Without restriction)<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="1" required="required" #{question.responses.install==1 ? "checked" : ""}><span class="checkmark"></span></label>
                             //- NO
                             if(question.responses.ourPrediction == 0)
                             else 
@@ -51,7 +60,7 @@ block survey-content
                             //- MAYBE
                             if(question.responses.ourPrediction == 2)
                             else 
-                              <label class="container-radio">Maybe<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="2" required="required" #{question.responses.install==2 ? "checked" : ""}><span class="checkmark"></span></label>
+                              <label class="container-radio">With restriction<input class="final-question" type="radio" name="questions[#{question._id}][install]" value="2" required="required" #{question.responses.install==2 ? "checked" : ""}><span class="checkmark"></span></label>
                           </div>
                         </div>
                   else 
@@ -61,7 +70,7 @@ block survey-content
                       // anwsers
                       .anwsers.mt-2
                         label.container-radio
-                          | Yes
+                          | Yes (Without restriction)
                           input(type='radio' class="final-question" name="questions[" + question._id + "][install]" value="1" required checked=question.responses.install == 1)
                           span.checkmark
 
@@ -71,43 +80,41 @@ block survey-content
                           span.checkmark
 
                         label.container-radio
-                          | Maybe
+                          | With restriction
                           input(type='radio' class="final-question" name="questions[" + question._id + "][install]" value="2" checked=question.responses.install == 2)
                           span.checkmark
                 </li>
-
               </ul>
-            
           </li>
         
         </ul>
 
         // satisfied
-        if(currentStage != "training")
+        if(currentStage != "training" && isShowComment)
           <ul class="list-group pl-0 mt-3">
             <li class="list-group-item p-3">
               | Are you satisfied with the system generated answer (i.e., the installation decision)? Please select the following options
               <div class="mt-4"> 
-                <label class="container-radio"> Yes
-                  <input class="predict-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="1" required #{lastQuestion.responses.satisfaction==1 ? "checked" : ""} />
+                <label class="container-radio"> Yes (Without restriction)
+                  <input class="satisfaction-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="1" required #{lastQuestion.responses.satisfaction==1 ? "checked" : ""} />
                   <span class="checkmark"> </span>
                 </label>
                 <label class="container-radio"> No
-                  <input class="predict-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="0" #{lastQuestion.responses.satisfaction==0 ? "checked" : ""} />
+                  <input class="satisfaction-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="0" #{lastQuestion.responses.satisfaction==0 ? "checked" : ""} />
                   <span class="checkmark"> </span>
                 </label>
-                <label class="container-radio"> Maybe
-                  <input class="predict-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="2" #{lastQuestion.responses.satisfaction==2 ? "checked" : ""} />
+                <label class="container-radio"> With restriction
+                  <input class="satisfaction-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="2" #{lastQuestion.responses.satisfaction==2 ? "checked" : ""} />
                   <span class="checkmark"> </span>
                 </label>
               </div>
-              <div class="mt-2">
-                <div class="font-weight-bold form-group">Can you explain about your option?</div>
-                <textarea class="form-control" style="width:100%" name=questions[#{lastQuestion._id}][finalComment] cols="30" rows="5" value="aaaa" required="">
-                  | #{lastQuestion.responses.finalComment}
-                </textarea>
-
-              </div>  
+              if(lastQuestion.responses.satisfaction != undefined && lastQuestion.responses.satisfaction != 1)
+                <div class="mt-2 comment-box">
+                  <div class="font-weight-bold form-group">Can you explain about your option?</div>
+                  <textarea class="form-control" style="width:100%" name=questions[#{lastQuestion._id}][finalComment] cols="30" rows="5">
+                    | #{lastQuestion.responses.finalComment}
+                  </textarea>
+                </div>  
                 
             </li>
 
@@ -116,7 +123,7 @@ block survey-content
         
         <div style="display: flex;align-items: center;justify-content: space-between;" class="mt-5">
           if(currentStage != "training")
-            <div><a href=/?currentStage=#{previousStage} class="login100-form-btn button-pre next-section-pre" style="color:black!important">Previous</a></div>
+            <div><a href=/?questionId=#{previousQuestionId} class="login100-form-btn button-pre next-section-pre" style="color:black!important">Previous</a></div>
           else 
             <div></div> 
           <div><input type="submit" class="next-section next-section-submit" value="Next"></div>

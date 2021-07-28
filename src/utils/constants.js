@@ -1,3 +1,5 @@
+const TOTAL_TRAINING = 20;
+const TOTAL_TESTING = 20;
 const categoryGroups = {
   Beauty: ["Beauty", "Lifestyle"],
   Business: ["Business"],
@@ -368,6 +370,8 @@ const STAGES = {
   end: "end"
 };
 export {
+  TOTAL_TESTING,
+  TOTAL_TRAINING,
   interactions,
   permissions,
   collections,

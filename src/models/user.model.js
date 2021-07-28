@@ -18,6 +18,7 @@ var userSchema = new Schema(
       type: String,
       default: "training"
     },
+    nextQuestionId: mongoose.Types.ObjectId,
     questions: [
       {
         responses: [
