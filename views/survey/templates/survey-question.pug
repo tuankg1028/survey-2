@@ -115,7 +115,12 @@ block survey-content
                     | #{lastQuestion.responses.finalComment}
                   </textarea>
                 </div>  
-                
+              else
+                <div class="mt-2 comment-box" style="display:none">
+                  <div class="font-weight-bold form-group">Can you explain about your option?</div>
+                  <textarea class="form-control" style="width:100%" name=questions[#{lastQuestion._id}][finalComment] cols="30" rows="5">
+                  </textarea>
+                </div>  
             </li>
 
           </ul>
