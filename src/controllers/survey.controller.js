@@ -154,12 +154,6 @@ class SurveyController {
         "previous"
       );
 
-      const nextQuestionId = Utils.Question.getQuestionId(
-        currentQuestionId,
-        refreshUser.questionIds,
-        "next"
-      );
-
       // stage
       const currentStage = Utils.Question.getStageByQuestionId(
         currentQuestionId,
@@ -301,10 +295,22 @@ class SurveyController {
         questionIds,
         "next"
       );
-      const nextStage = Utils.Question.getStageByQuestionId(
-        nextQuestionId,
-        questionIds
-      );
+
+      let nextStage;
+      if (
+        currentStage === constants.STAGES.testing4 &&
+        Utils.Question.getIndexOfQuestionInStage(
+          currentQuestionId,
+          questionIds
+        ) === 4
+      ) {
+        nextStage = constants.STAGES.end;
+      } else {
+        nextStage = Utils.Question.getStageByQuestionId(
+          nextQuestionId,
+          questionIds
+        );
+      }
 
       // get answers
       const newQuestions = [...oldQuestions];

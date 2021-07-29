@@ -167,7 +167,7 @@ function getStageByQuestionId(questionId, questionIds) {
   else if (index < 5) return STAGES.testing1;
   else if (index < 10) return STAGES.testing2;
   else if (index < 15) return STAGES.testing3;
-  else if (index < 15) return STAGES.testing4;
+  else if (index < 20) return STAGES.testing4;
 }
 
 function getPreviousStage(current) {
