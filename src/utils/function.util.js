@@ -2735,6 +2735,15 @@ const getOurPredictionApproach1 = async (
   question,
   algorithm = "EM"
 ) => {
+  console.log(
+    "Prediction :: Step 1: input",
+    JSON.stringify({
+      tranningIds,
+      userAnswer,
+      question,
+      algorithm
+    })
+  );
   const tranningQuestions = await Promise.all(
     tranningIds.map(id => Models.Question.findById(id).cache(60 * 60 * 24 * 30))
   );
@@ -2800,7 +2809,7 @@ const getOurPredictionApproach1 = async (
   const testSet = [[...interactions, ...permissions, ...collections, -1]];
 
   // eslint-disable-next-line no-console
-  console.log("Step 2 tranning and test: ", tranningSet, testSet);
+  console.log("Prediction :: Step 2: tranning and test", tranningSet, testSet);
   let predict;
   switch (algorithm) {
     // SVM
@@ -2840,7 +2849,7 @@ const getOurPredictionApproach1 = async (
   }
 
   // eslint-disable-next-line no-console
-  console.log("Step 3 Prediction is: ", predict);
+  console.log("Prediction :: Step 3: result", predict);
   return predict ? predict[0][0] : 0;
 };
 
