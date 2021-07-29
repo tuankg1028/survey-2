@@ -264,24 +264,6 @@ const personalDataTypes = [
       "The app collects basic personal data such as full name, age, gender, etc, plus information on social network (e.g., work, education, friend list, family members),  or biometric data."
   }
 ];
-// (async function main() {
-//   let data = await csv({
-//     noheader: true,
-//     output: "csv"
-//   }).fromFile("/Users/a1234/Downloads/KeyWorkSearch_New_1_.csv");
-
-//   // console.log(data)
-//   const result = []
-//   for (let i = 1; i < data.length; i++) {
-//     let [id, name, level, parent, keywords] = data[i];
-
-//     result.push({
-//       id, name, level, parent, keywords: keywords ? keywords.split(",").map(item => item.trim()).filter(item => !!item) : 'null'
-//     })
-//   }
-
-//   console.log(result)
-// }) ()
 
 function getGroupApi(api) {
   let result;
@@ -2758,6 +2740,15 @@ const getOurPredictionApproach1 = async (
         : 0;
     });
 
+    const services = constants.services.map(item => {
+      return _.includes(
+        [tranningQuestion.id, tranningQuestion.lv1.id, tranningQuestion.lv3.id],
+        item[0]
+      )
+        ? 1
+        : 0;
+    });
+
     const permissions = constants.permissions.map(item => {
       return tranningQuestion.subItem.type == "permission" &&
         tranningQuestion.subItem.id == item[0]
@@ -2781,12 +2772,38 @@ const getOurPredictionApproach1 = async (
       item => item.name === "install"
     );
 
-    const label = Number(questionInstallation.value);
+    if (questionInstallation === undefined) {
+      const questionPredict = userAnswerQuestion.responses.find(
+        item => item.name === "agreePredict"
+      );
 
-    return [...interactions, ...permissions, ...collections, label];
+      if (questionPredict && Number(questionPredict.value) === 1) {
+        questionInstallation = userAnswerQuestion.responses.find(
+          item => item.name === "ourPrediction"
+        );
+      }
+    }
+
+    if (!questionInstallation) throw Error("Answer not found");
+
+    let label = questionInstallation.value;
+
+    return [
+      ...interactions,
+      ...services,
+      ...permissions,
+      ...collections,
+      Number(label)
+    ];
   });
 
   const interactions = constants.interactions.map(item => {
+    return _.includes([question.id, question.lv1.id, question.lv3.id], item[0])
+      ? 1
+      : 0;
+  });
+
+  const services = constants.services.map(item => {
     return _.includes([question.id, question.lv1.id, question.lv3.id], item[0])
       ? 1
       : 0;
@@ -2806,10 +2823,17 @@ const getOurPredictionApproach1 = async (
       : 0;
   });
 
-  const testSet = [[...interactions, ...permissions, ...collections, -1]];
+  const testSet = [
+    [...interactions, ...services, ...permissions, ...collections, -1]
+  ];
 
   // eslint-disable-next-line no-console
-  console.log("Prediction :: Step 2: tranning and test", tranningSet, testSet);
+  console.log(
+    "Prediction :: Step 2: tranning and test",
+    tranningSet,
+    testSet,
+    tranningSet.length
+  );
   let predict;
   switch (algorithm) {
     // SVM
