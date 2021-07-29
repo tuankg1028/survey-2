@@ -93,9 +93,9 @@ block survey-content
         if(currentStage != "training" && isShowComment)
           <ul class="list-group pl-0 mt-3">
             <li class="list-group-item p-3">
-              | Are you satisfied with the system generated answer (i.e., the installation decision)? Please select the following options
+              | Are you satisfied with the system generated answer? Please select the following options
               <div class="mt-4"> 
-                <label class="container-radio"> Yes (Without restriction)
+                <label class="container-radio"> Yes
                   <input class="satisfaction-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="1" required #{lastQuestion.responses.satisfaction==1 ? "checked" : ""} />
                   <span class="checkmark"> </span>
                 </label>
@@ -103,7 +103,7 @@ block survey-content
                   <input class="satisfaction-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="0" #{lastQuestion.responses.satisfaction==0 ? "checked" : ""} />
                   <span class="checkmark"> </span>
                 </label>
-                <label class="container-radio"> With restriction
+                <label class="container-radio"> Maybe
                   <input class="satisfaction-question" type="radio" name=questions[#{lastQuestion._id}][satisfaction] value="2" #{lastQuestion.responses.satisfaction==2 ? "checked" : ""} />
                   <span class="checkmark"> </span>
                 </label>
