@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import Utils from "../utils";
 import MongooseCache from "mongoose-redis";
 
+console.log("mongo", process.env.MONGODB_URL);
 mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
