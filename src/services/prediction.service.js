@@ -3,7 +3,7 @@ import axios from "axios";
 class Prediction {
   constructor() {
     this.API = axios.create({
-      baseURL: "http://localhost:5000",
+      baseURL: "https://rais.dista.uninsubria.it/algorithm",
       timeout: 60 * 1000
     });
   }
