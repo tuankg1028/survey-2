@@ -2830,8 +2830,8 @@ const getOurPredictionApproach1 = async (
   // eslint-disable-next-line no-console
   console.log(
     "Prediction :: Step 2: tranning and test",
-    tranningSet,
-    testSet,
+    JSON.stringify(tranningSet),
+    JSON.stringify(testSet),
     tranningSet.length
   );
   let predict;
