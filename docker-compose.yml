@@ -42,3 +42,8 @@ services:
       - 6378:6379
     networks:
       - backend
+
+
+networks:
+  backend:
+    external: false
