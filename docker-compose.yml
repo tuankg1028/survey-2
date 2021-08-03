@@ -35,20 +35,18 @@ services:
         max_attempts: 3
         window: 120s
   redis:
-    image: "redis:alpine"
-    # volumes:
-    #   - ./data/redis:/data
-    # ports:
-    #   - 6378:6379
-    networks:
-      - backend
+    image: redis:6.0-rc1
+    ports:
+      - "6379:6379"
+    volumes:
+      - data:/home/docker/data
     deploy:
       placement:
-        constraints:
-          - "node.role==manager"
-    # command: ["redis-server", "--bind", "redis", "--port", "6379"]
-
-
+        constraints: [node.role == manager]
+    command: redis-server --appendonly yes
 
 networks:
   backend:
+
+volumes:
+  data:
