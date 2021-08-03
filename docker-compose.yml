@@ -34,5 +34,7 @@ services:
         window: 120s
   redis:
     image: "redis:alpine"
+    volumes:
+      - ./data/redis:/data
     ports:
       - 6378:6379
