@@ -7,6 +7,8 @@ services:
       - "3333:3333"
     networks:
       - backend
+    depends_on:
+      - redis
     # service deployment
     deploy:
       # service resource management
