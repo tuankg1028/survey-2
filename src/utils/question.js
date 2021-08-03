@@ -75,8 +75,8 @@ async function getQuestionsByStage(
   questions = questions.map(question => {
     const text =
       question.subItem.type === "permission"
-        ? `You are playing <b>${question.name}</b>. Do you allow to share your <b>${question.lv3.name}</b> with you <b>${question.subItem.name}</b>?`
-        : `You are playing <b>${question.name}</b>. Do you allow to share your <b>${question.lv3.name}</b> to collect your <b>${question.subItem.name}</b>?`;
+        ? `You are <b>${question.name}</b>. Do you allow to share your <b>${question.lv3.name}</b> with you <b>${question.subItem.name}</b>?`
+        : `You are <b>${question.name}</b>. Do you allow to share your <b>${question.lv3.name}</b> to collect your <b>${question.subItem.name}</b>?`;
     return {
       ...question.toJSON(),
       _id: question._id,
