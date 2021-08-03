@@ -1,15 +1,13 @@
 version: '3.7'
 services:
-  nodeserver:
-    image: survey_nodeserver:latest
+  survey:
+    image: survey-api:latest
+    build: .
     ports:
       - "3333:3333"
     # service deployment
-    # deploy:
-    #   mode: replicated
-    #   replicas: 2
-      # labels: [APP=NODE_SERVER]
-      # # service resource management
+    deploy:
+      # service resource management
       # resources:
       #   # Hard limit - Docker does not allow to allocate more
       #   limits:
@@ -19,29 +17,32 @@ services:
       #   reservations:
       #     cpus: '0.25'
       #     memory: 256M
-      # # service restart policy
-      # restart_policy:
-      #   condition: on-failure
-      #   delay: 5s
-      #   max_attempts: 3
-      #   window: 120s
-      # # service update configuration
-      # update_config:
-      #   parallelism: 1
-      #   delay: 10s
-      #   failure_action: continue
-      #   monitor: 60s
-      #   max_failure_ratio: 0.3
+      # service restart policy
+      replicas: 4
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
   redis:
     image: "redis:alpine"
     volumes:
       - ./data/redis:/data
-  db:
-    image: mongo
-    volumes:
-      - ./data/db:/data/db
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: 123123
+  # db:
+  #   image: cagataygurturk/docker-ssh-tunnel:0.0.1
+  #   volumes:
+  #     - $HOME/.ssh:/root/ssh:ro
+  #   environment:
+  #     TUNNEL_HOST: db-tunnel
+  #     REMOTE_HOST: 193.206.183.134
+  #     LOCAL_PORT: 3306
+  #     REMOTE_PORT: 3306
 
