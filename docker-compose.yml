@@ -34,8 +34,6 @@ services:
         window: 120s
   redis:
     image: "redis:alpine"
-    volumes:
-      - ./data/redis:/data
   # db:
   #   image: cagataygurturk/docker-ssh-tunnel:0.0.1
   #   volumes:
