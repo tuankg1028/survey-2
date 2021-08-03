@@ -34,13 +34,5 @@ services:
         window: 120s
   redis:
     image: "redis:alpine"
-  # db:
-  #   image: cagataygurturk/docker-ssh-tunnel:0.0.1
-  #   volumes:
-  #     - $HOME/.ssh:/root/ssh:ro
-  #   environment:
-  #     TUNNEL_HOST: db-tunnel
-  #     REMOTE_HOST: 193.206.183.134
-  #     LOCAL_PORT: 3306
-  #     REMOTE_PORT: 3306
-
+    ports:
+      - 6378:6379
