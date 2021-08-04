@@ -59,30 +59,30 @@ services:
     command: redis-server --appendonly yes
 
   
-  traefik:
-    image: traefik:v2.4
-    # command:
-    #   - --docker
-    #   - --docker.swarmMode
-    #   - --docker.exposedByDefault=false
-    #   - --docker.watch
-    #   - --docker.domain=traefik.lc
-    ports:
-      - 80:80
-      - 8080:8080
-    networks:
-      - reverse-proxy-net
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ~/traefik.yml:/etc/traefik/traefik.yml
-      # - /Users/xander/traefik.yml:/etc/traefik/traefik.yml
-    # deploy:
-    #   placement:
-    #     constraints:
-    #       - node.role==manager
-    # labels:
-      # - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`)"
-      # - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+  # traefik:
+  #   image: traefik:v2.4
+  #   # command:
+  #   #   - --docker
+  #   #   - --docker.swarmMode
+  #   #   - --docker.exposedByDefault=false
+  #   #   - --docker.watch
+  #   #   - --docker.domain=traefik.lc
+  #   ports:
+  #     - 80:80
+  #     - 8080:8080
+  #   networks:
+  #     - reverse-proxy-net
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - ~/traefik.yml:/etc/traefik/traefik.yml
+  #     # - /Users/xander/traefik.yml:/etc/traefik/traefik.yml
+  #   # deploy:
+  #   #   placement:
+  #   #     constraints:
+  #   #       - node.role==manager
+  #   # labels:
+  #     # - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`)"
+  #     # - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
 
 networks:
   webnet:
