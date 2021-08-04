@@ -79,13 +79,8 @@ services:
     #   placement:
     #     constraints:
     #       - node.role==manager
-    # labels:
-    #   - "traefik.http.routers.traefik.rule=Host(`rais.dista.uninsubria.it`)"
-    #   - "traefik.enable=true"
-    #   - "traefik.docker.network=reverse-proxy-net"
-    #   - "traefik.port=8080"
-    #   - "traefik.traefik.rule=Host:traefik.lc"
-      
+    labels:
+      - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
 
 networks:
   webnet:
