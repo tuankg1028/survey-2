@@ -13,15 +13,15 @@ services:
     # service deployment
     deploy:
       # service resource management
-      # resources:
-      #   # Hard limit - Docker does not allow to allocate more
-      #   limits:
-      #     cpus: '0.25'
-      #     memory: 512M
-      #   # Soft limit - Docker makes best effort to return to it
-      #   reservations:
-      #     cpus: '0.25'
-      #     memory: 256M
+      resources:
+        # Hard limit - Docker does not allow to allocate more
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        # Soft limit - Docker makes best effort to return to it
+        reservations:
+          cpus: '0.50'
+          memory: 256M
       # service restart policy
       replicas: 4
       update_config:
