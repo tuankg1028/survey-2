@@ -4,9 +4,9 @@ services:
     image: untadee/survey-api:latest
     build: .
     ports:
-      - "4444:3333"
+      - "3333:3333"
     networks:
-      - backend
+      - webnet
     depends_on:
       - redis
     # service deployment
@@ -39,16 +39,29 @@ services:
   redis:
     image: redis:6.0-rc1
     ports:
-      - "6379:6379"
+      - "6378:6379"
     volumes:
       - data:/home/docker/data
     deploy:
       placement:
         constraints: [node.role == manager]
     command: redis-server --appendonly yes
+    networks:
+      - webnet
 
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+    networks:
+      - webnet
 networks:
-  backend:
+  webnet:
 
 volumes:
   data:
