@@ -73,8 +73,8 @@ services:
       - reverse-proxy-net
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - $PWD/traefik.yml:/etc/traefik/traefik.yml
-      # - /Users/xander/traefik.yml:/etc/traefik/traefik.yml
+      # - $PWD/traefik.yml:/etc/traefik/traefik.yml
+      - ~/traefik.yml:/etc/traefik/traefik.yml
     deploy:
       placement:
         constraints:
