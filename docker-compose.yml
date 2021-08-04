@@ -83,11 +83,15 @@ services:
   #   # labels:
   #     # - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`)"
   #     # - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
-
+  #     docker run -d -p 8080:8080 -p 80:80 \
+  #     -v ~/traefik.yml:/etc/traefik/traefik.yml \
+  #     -v /var/run/docker.sock:/var/run/docker.sock \
+  #     -n reverse-proxy-net
+  #     traefik:v2.4
 networks:
   webnet:
-  reverse-proxy-net:
-    name: reverse-proxy-net
-    driver: overlay
+  # reverse-proxy-net:
+  #   name: reverse-proxy-net
+  #   driver: overlay
 volumes:
   data:
