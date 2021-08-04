@@ -43,11 +43,13 @@ services:
     volumes:
       - data:/home/docker/data
     deploy:
+      replicas: 4
       placement:
         constraints: [node.role == manager]
     command: redis-server --appendonly yes
     networks:
       - webnet
+    
 
   visualizer:
     image: dockersamples/visualizer:stable
