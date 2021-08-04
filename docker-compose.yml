@@ -79,8 +79,8 @@ services:
     #   placement:
     #     constraints:
     #       - node.role==manager
-    labels:
-      - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`)"
+    # labels:
+      # - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`)"
       # - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
 
 networks:
