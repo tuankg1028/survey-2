@@ -117,6 +117,6 @@ networks:
   webnet:
   reverse-proxy-net:
     name: reverse-proxy-net
-    driver: overlap
+    driver: overlay
 volumes:
   data:
