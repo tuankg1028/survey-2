@@ -14,7 +14,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=reverse-proxy-net"
-      - traefik.http.routers.web.rule=Host(`rais.dista.uninsubria.it`)
+      - "traefik.http.routers.web.rule=Host(`rais.dista.uninsubria.it`)"
       # - traefik.http.services.web.loadbalancer.server.port=8080
     # service deployment
     deploy:
@@ -72,7 +72,6 @@ services:
     networks:
       - reverse-proxy-net
     volumes:
-      - traefik.http.routers.traefik.rule=Host(`rais.dista.uninsubria.it`)
       - /var/run/docker.sock:/var/run/docker.sock
       - ~/traefik.yml:/etc/traefik/traefik.yml
       # - /Users/xander/traefik.yml:/etc/traefik/traefik.yml
@@ -81,10 +80,11 @@ services:
     #     constraints:
     #       - node.role==manager
     # labels:
+    #   - "traefik.http.routers.traefik.rule=Host(`rais.dista.uninsubria.it`)"
     #   - "traefik.enable=true"
     #   - "traefik.docker.network=reverse-proxy-net"
     #   - "traefik.port=8080"
-    #   - "traefik.frontend.rule=Host:traefik.lc"
+    #   - "traefik.traefik.rule=Host:traefik.lc"
       
 
 networks:
