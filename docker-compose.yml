@@ -15,7 +15,7 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=reverse-proxy-net"
       - traefik.http.routers.web.rule=Host(`rais.dista.uninsubria.it`)
-      - traefik.http.services.web.loadbalancer.server.port=8080
+      # - traefik.http.services.web.loadbalancer.server.port=8080
     # service deployment
     deploy:
       # service resource management
@@ -72,6 +72,7 @@ services:
     networks:
       - reverse-proxy-net
     volumes:
+      - traefik.http.routers.web.rule=Host(`rais.dista.uninsubria.it`)
       - /var/run/docker.sock:/var/run/docker.sock
       - ~/traefik.yml:/etc/traefik/traefik.yml
       # - /Users/xander/traefik.yml:/etc/traefik/traefik.yml
