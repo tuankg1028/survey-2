@@ -13,30 +13,30 @@ services:
     # service deployment
     deploy:
       # service resource management
-      # resources:
-      #   # Hard limit - Docker does not allow to allocate more
-      #   limits:
-      #     cpus: '0.25'
-      #     memory: 512M
-      #   # Soft limit - Docker makes best effort to return to it
-      #   reservations:
-      #     cpus: '0.25'
-      #     memory: 256M
-      # service restart policy
-      # replicas: 4
-      # update_config:
-      #   parallelism: 2
-      #   order: start-first
-      #   failure_action: rollback
-      #   delay: 10s
-      # rollback_config:
-      #   parallelism: 0
-      #   order: stop-first
-      # restart_policy:
-      #   condition: on-failure
-      #   delay: 5s
-      #   max_attempts: 3
-      #   window: 120s
+      resources:
+        # Hard limit - Docker does not allow to allocate more
+        limits:
+          cpus: '0.25'
+          memory: 512M
+        # Soft limit - Docker makes best effort to return to it
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+      service restart policy
+      replicas: 4
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
   redis:
     image: redis:6.0-rc1
     ports:
