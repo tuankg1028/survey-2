@@ -9,7 +9,6 @@ services:
       - webnet
     depends_on:
       - redis
-      - visualizer
     # service deployment
     deploy:
       # service resource management
