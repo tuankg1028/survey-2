@@ -7,8 +7,15 @@ services:
       - "3333:3333"
     networks:
       - webnet
+      - reverse-proxy-net
     depends_on:
       - redis
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=reverse-proxy-net"
+      - traefik.http.routers.web.rule=Host(`rais.dista.uninsubria.it`)
+      - traefik.http.services.web.loadbalancer.server.port=8080
     # service deployment
     deploy:
       # service resource management
@@ -42,16 +49,47 @@ services:
       - "6378:6379"
     volumes:
       - data:/home/docker/data
+    networks:
+      - webnet
     deploy:
       # replicas: 4
       placement:
         constraints: [node.role == manager]
     command: redis-server --appendonly yes
+
+  
+  traefik:
+    image: traefik:v2.4
+    # command:
+    #   - --docker
+    #   - --docker.swarmMode
+    #   - --docker.exposedByDefault=false
+    #   - --docker.watch
+    #   - --docker.domain=traefik.lc
+    ports:
+      - 80:80
+      - 8080:8080
     networks:
-      - webnet
+      - reverse-proxy-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/traefik.yml:/etc/traefik/traefik.yml
+      # - /Users/xander/traefik.yml:/etc/traefik/traefik.yml
+    # deploy:
+    #   placement:
+    #     constraints:
+    #       - node.role==manager
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.docker.network=reverse-proxy-net"
+    #   - "traefik.port=8080"
+    #   - "traefik.frontend.rule=Host:traefik.lc"
+      
 
 networks:
   webnet:
-
+  reverse-proxy-net:
+    name: reverse-proxy-net
+    driver: overlay
 volumes:
   data:
