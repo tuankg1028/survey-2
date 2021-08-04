@@ -58,39 +58,65 @@ services:
     command: redis-server --appendonly yes
 
   
-  # traefik:
-  #   image: traefik:v2.4
-  #   # command:
-  #   #   - --docker
-  #   #   - --docker.swarmMode
-  #   #   - --docker.exposedByDefault=false
-  #   #   - --docker.watch
-  #   #   - --docker.domain=traefik.lc
-  #   ports:
-  #     - 80:80
-  #     - 8080:8080
-  #   networks:
-  #     - reverse-proxy-net
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - ~/traefik.yml:/etc/traefik/traefik.yml
-  #     # - /Users/xander/traefik.yml:/etc/traefik/traefik.yml
-  #   # deploy:
-  #   #   placement:
-  #   #     constraints:
-  #   #       - node.role==manager
-  #   # labels:
-  #     # - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`)"
-  #     # - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
-  #     docker run -d -p 8080:8080 -p 80:80 \
-  #     -v ~/traefik.yml:/etc/traefik/traefik.yml \
-  #     -v /var/run/docker.sock:/var/run/docker.sock \
-  #     -n reverse-proxy-net
-  #     traefik:v2.4
+  traefik:
+    image: traefik:v2.4
+    # command:
+    #   - --docker
+    #   - --docker.swarmMode
+    #   - --docker.exposedByDefault=false
+    #   - --docker.watch
+    #   - --docker.domain=traefik.lc
+    ports:
+      - 80:80
+      - 8080:8080
+    networks:
+      - reverse-proxy-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/traefik.yml:/etc/traefik/traefik.yml
+      # - /Users/xander/traefik.yml:/etc/traefik/traefik.yml
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
+    # labels:
+      # - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`)"
+      # - "traefik.http.routers.dashboard.rule=Host(`rais.dista.uninsubria.it`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      # docker run -d -p 8080:8080 -p 80:80 \
+      # -v ~/traefik.yml:/etc/traefik/traefik.yml \
+      # -v /var/run/docker.sock:/var/run/docker.sock \
+      # -n reverse-proxy-net
+      # traefik:v2.4
+    deploy:
+      # service resource management
+      resources:
+        # Hard limit - Docker does not allow to allocate more
+        limits:
+          cpus: '0.50'
+          memory: 512M
+        # Soft limit - Docker makes best effort to return to it
+        reservations:
+          cpus: '0.50'
+          memory: 256M
+      # service restart policy
+      replicas: 2
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 networks:
   webnet:
   reverse-proxy-net:
-    external: true
     name: reverse-proxy-net
+    driver: overlap
 volumes:
   data:
