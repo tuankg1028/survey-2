@@ -90,8 +90,8 @@ services:
   #     traefik:v2.4
 networks:
   webnet:
-  # reverse-proxy-net:
-  #   name: reverse-proxy-net
-  #   driver: overlay
+  reverse-proxy-net:
+    external: true
+    name: reverse-proxy-net
 volumes:
   data:
