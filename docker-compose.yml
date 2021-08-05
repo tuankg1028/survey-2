@@ -7,7 +7,7 @@ services:
       - "3333:3333"
     networks:
       - webnet
-      - reverse-proxy-net
+      - traefik-public
     depends_on:
       - redis
       - traefik
@@ -59,7 +59,7 @@ services:
 
 networks:
   webnet:
-  reverse-proxy-net:
+  traefik-public:
     external: true
 volumes:
   data:
