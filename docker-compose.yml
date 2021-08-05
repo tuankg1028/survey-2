@@ -42,7 +42,7 @@ services:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
         - traefik.constraint-label=traefik-public
-        - traefik.http.routers.survey-web.rule=Host(`rais.dista.uninsubria.it`)
+        - traefik.http.routers.survey-web.rule=Host(`rais.dista.uninsubria.it`) && (PathPrefix(`/survey/`)
         - traefik.http.routers.traefik-public-https.entrypoints=https
         - traefik.http.routers.traefik-public-https.tls=true
         # - traefik.http.middlewares.survey-strip-prefix.stripprefix.prefixes=/survey
