@@ -13,9 +13,10 @@ services:
       - traefik
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=reverse-proxy-net"
-      - "traefik.http.routers.web.rule=Host(`rais.dista.uninsubria.it`) && Path(`/survey`)"
-      # - traefik.http.services.web.loadbalancer.server.port=8080
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.survey.rule=Host(`rais.dista.uninsubria.it`) && PathPrefix(`/survey`)"
+      - traefik.http.routers.survey.middlewares=survey-strip-prefix
+      - traefik.http.middlewares.survey-strip-prefix.stripprefix.prefixes=/survey
     # service deployment
     deploy:
       # service resource management
