@@ -10,13 +10,12 @@ services:
       - traefik-public
     depends_on:
       - redis
-      - traefik
     labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=traefik-public"
-      - "traefik.http.routers.survey.rule=Host(`rais.dista.uninsubria.it`) && PathPrefix(`/survey`)"
-      - traefik.http.routers.survey.middlewares=survey-strip-prefix
+      - traefik.enable=true
+      - traefik.docker.network=traefik-public
+      - traefik.http.routers.survey-web.rule=Host(`rais.dista.uninsubria.it`)
       - traefik.http.middlewares.survey-strip-prefix.stripprefix.prefixes=/survey
+      - traefik.http.routers.survey-web.middlewares=survey-strip-prefix
     # service deployment
     deploy:
       # service resource management
