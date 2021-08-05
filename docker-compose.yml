@@ -15,6 +15,8 @@ services:
       - traefik.docker.network=traefik-public
       - traefik.constraint-label=traefik-public
       - traefik.http.routers.survey-web.rule=Host(`rais.dista.uninsubria.it`)
+      - traefik.http.routers.traefik-public-https.entrypoints=https
+      - traefik.http.routers.traefik-public-https.tls=true
       # - traefik.http.middlewares.survey-strip-prefix.stripprefix.prefixes=/survey
       # - traefik.http.routers.survey-web.middlewares=survey-strip-prefix
       - traefik.http.services.traefik-public.loadbalancer.server.port=3333
