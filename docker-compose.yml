@@ -13,6 +13,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=traefik-public
+      - traefik.constraint-label=traefik-public
       - traefik.http.routers.survey-web.rule=Host(`rais.dista.uninsubria.it`)
       - traefik.http.middlewares.survey-strip-prefix.stripprefix.prefixes=/survey
       - traefik.http.routers.survey-web.middlewares=survey-strip-prefix
