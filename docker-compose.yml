@@ -47,7 +47,7 @@ services:
         - traefik.http.routers.survey-web.tls=true
         - traefik.http.middlewares.survey-strip-prefix.stripprefix.prefixes=/survey
         - traefik.http.routers.survey-web.middlewares=survey-strip-prefix
-        # - traefik.http.services.traefik-public.loadbalancer.server.port=3333
+        - traefik.http.services.survey-web.loadbalancer.server.port=3333
   redis:
     image: redis:6.0-rc1
     ports:
