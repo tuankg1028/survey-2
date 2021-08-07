@@ -24,7 +24,7 @@ jobs:
         password: son.ha1320
         port: 1904
         source: "docker-compose.yml"
-        target: "~/github-deployment"
+        target: "github-deployment"
 
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
