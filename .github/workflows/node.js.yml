@@ -36,5 +36,5 @@ jobs:
         username: son.ha
         password: son.ha1320
         port: 1904
-        script: sh /home/son.ha/github-deployment/survey-2/deploy.sh
+        script: cd /home/son.ha/github-deployment/survey-2 && sh deploy.sh
     
