@@ -23,22 +23,32 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v1
+      id: buildx
     
-    - uses: actions/cache@v2
+    - name: Cache Docker Image Layers
+      uses: actions/cache@v2
       with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
         restore-keys: |
-          ${{ runner.os }}-node-
-
+          ${{ runner.os }}-buildx-
+            
     - name: Build and push
       id: docker_build
       uses: docker/build-push-action@v2
       with:
+      
+    - name: Verify
+      run: echo ${{ steps.docker_build.outputs.digest }}
         context: ./
         file: ./Dockerfile
         push: true
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/survey-api:latest
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache
 
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
