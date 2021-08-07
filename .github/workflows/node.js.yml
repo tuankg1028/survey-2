@@ -26,8 +26,8 @@ jobs:
         username: son.ha
         password: son.ha1320
         port: 1904
-        source: "docker-compose.yml"
-        target: "/home/son.ha/github-deployment"
+        source: "docker-compose.yml,deploy.sh"
+        target: "/home/son.ha/github-deployment/survey-2"
 
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
@@ -36,5 +36,5 @@ jobs:
         username: son.ha
         password: son.ha1320
         port: 1904
-        script: ls -al
+        script: sh /home/son.ha/github-deployment/survey-2/deploy.sh
     
