@@ -62,4 +62,4 @@ jobs:
         deploy_path: ~/docker-deployment
         stack_file_name: docker-compose.yml
         keep_files: 5
-        args: survey
+        args: docker stack deploy --compose-file $FILE --log-level debug survey
