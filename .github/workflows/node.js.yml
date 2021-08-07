@@ -22,19 +22,19 @@ jobs:
     - name: copy file via ssh password
       uses: appleboy/scp-action@master
       with:
-        host: 193.206.183.134
-        username: son.ha
-        password: son.ha1320
-        port: 1904
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
         source: "docker-compose.yml,deploy.sh"
-        target: "/home/son.ha/github-deployment/survey-2"
+        target: ${{TARGER_DIR}}/survey-2
 
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@master
       with:
-        host: 193.206.183.134
-        username: son.ha
-        password: son.ha1320
-        port: 1904
-        script: cd /home/son.ha/github-deployment/survey-2 && sh deploy.sh
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: cd ${{TARGER_DIR}}/survey-2 && sh deploy.sh
     
