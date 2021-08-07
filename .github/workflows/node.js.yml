@@ -19,6 +19,15 @@ jobs:
     - name: Check Out Repo 
       uses: actions/checkout@v2
       
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: cd ${{ secrets.TARGER_DIR }}/survey-2
+
     - name: copy file via ssh password
       uses: appleboy/scp-action@master
       with:
@@ -28,14 +37,7 @@ jobs:
         port: ${{ secrets.PORT }}
         rm: true
         source: "docker-compose.yml,deploy.sh"
-        target: ${{ secrets.TARGER_DIR }}/survey-2
+        target: "${{ secrets.TARGER_DIR }}/survey-2"
 
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-        script: cd ${{ secrets.TARGER_DIR }}/survey-2 && sh deploy.sh
+    
     
