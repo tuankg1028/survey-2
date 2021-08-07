@@ -14,21 +14,43 @@ jobs:
 
     runs-on: ubuntu-latest
     
-    
     steps:
     - name: Check Out Repo 
       uses: actions/checkout@v2
       
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@master
+    - name: Login to Docker Hub
+      uses: docker/login-action@v1
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-        script: cd ${{ secrets.TARGER_DIR }}/survey-2
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          
+    - name: Setup Docker Buildx
+      uses: docker/setup-buildx-action@v1
+      id: buildx
+    
+    - name: Cache Docker Image Layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+            
+    - name: Build and push
+      id: docker_build
+      uses: docker/build-push-action@v2
+      with:
+        context: ./
+        file: ./Dockerfile
+        push: true
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/survey-api:latest
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache
 
-    - name: copy file via ssh password
+    - name: Image digest
+      run: echo ${{ steps.docker_build.outputs.digest }}
+
+    - name: Copy deploy files to Remote server via ssh password
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -38,6 +60,15 @@ jobs:
         rm: true
         source: "docker-compose.yml,deploy.sh"
         target: "${{ secrets.TARGER_DIR }}/survey-2"
+
+    - name: Deploy stacks 
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: cd ${{ secrets.TARGER_DIR }}/survey-2 && sh deploy.sh
 
     
     
