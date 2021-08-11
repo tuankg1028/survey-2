@@ -2798,38 +2798,6 @@ const getOurPredictionApproach1 = async (
       }
     }
 
-    const interactions = constants.interactions.map(item => {
-      return _.includes(
-        [tranningQuestion.id, tranningQuestion.lv1.id, tranningQuestion.lv3.id],
-        item[0]
-      )
-        ? 1
-        : 0;
-    });
-
-    const services = constants.services.map(item => {
-      return _.includes(
-        [tranningQuestion.id, tranningQuestion.lv1.id, tranningQuestion.lv3.id],
-        item[0]
-      )
-        ? 1
-        : 0;
-    });
-
-    const permissions = constants.permissions.map(item => {
-      return tranningQuestion.subItem.type == "permission" &&
-        tranningQuestion.subItem.id == item[0]
-        ? 1
-        : 0;
-    });
-
-    const collections = constants.collections.map(item => {
-      return tranningQuestion.subItem.type == "collection" &&
-        tranningQuestion.subItem.id == item[0]
-        ? 1
-        : 0;
-    });
-
     // get answer for this question
     const userAnswerQuestion = userAnswer.questions[index];
 
@@ -2855,50 +2823,73 @@ const getOurPredictionApproach1 = async (
 
     let label = questionInstallation.value;
 
-    return [
-      ...interactions,
-      ...services,
-      ...permissions,
-      ...collections,
-      Number(label)
-    ];
+    return [...row, Number(label)];
   });
 
-  const interactions = constants.interactions.map(item => {
-    return _.includes([question.id, question.lv1.id, question.lv3.id], item[0])
-      ? 1
-      : 0;
-  });
+  let row = [];
+  switch (question.type) {
+    case "type1": {
+      const interactions = constants.interactions.map(item => {
+        return _.includes(
+          [question.id, question.param2.id, question.param3.id],
+          item[0]
+        )
+          ? 1
+          : 0;
+      });
 
-  const services = constants.services.map(item => {
-    return _.includes([question.id, question.lv1.id, question.lv3.id], item[0])
-      ? 1
-      : 0;
-  });
+      const services = constants.services.map(item => 0);
+      const permissions = constants.permissions.map(item => 0);
+      const collections = constants.collections.map(item => 0);
+      row = [...interactions, ...services, ...permissions, ...collections];
 
-  const permissions = constants.permissions.map(item => {
-    return question.subItem.type == "permission" &&
-      question.subItem.id == item[0]
-      ? 1
-      : 0;
-  });
+      break;
+    }
+    case "type2": {
+      const interactions = constants.interactions.map(item => {
+        return _.includes([question.id], item[0]) ? 1 : 0;
+      });
 
-  const collections = constants.collections.map(item => {
-    return question.subItem.type == "collection" &&
-      question.subItem.id == item[0]
-      ? 1
-      : 0;
-  });
+      const services = constants.services.map(item => 0);
+      const permissions = constants.permissions.map(item => {
+        return _.includes([question.param2.id, question.param3.id], item[0])
+          ? 1
+          : 0;
+      });
 
-  const testSet = [
-    [...interactions, ...services, ...permissions, ...collections, -1]
-  ];
+      const collections = constants.collections.map(item => 0);
+      row = [...interactions, ...services, ...permissions, ...collections];
+
+      break;
+    }
+    default: {
+      const interactions = constants.interactions.map(item => 0);
+
+      const services = constants.services.map(item => {
+        return _.includes([question.param2.id, question.param3.id], item[0])
+          ? 1
+          : 0;
+      });
+
+      const permissions = constants.permissions.map(item => 0);
+
+      const collections = constants.collections.map(item => {
+        return _.includes([question.id], item[0]) ? 1 : 0;
+      });
+
+      row = [...interactions, ...services, ...permissions, ...collections];
+
+      break;
+    }
+  }
+
+  const testSet = [[...row, -1]];
 
   // eslint-disable-next-line no-console
   console.log(
     "Prediction :: Step 2: tranning and test",
-    JSON.stringify(tranningSet),
-    JSON.stringify(testSet),
+    // JSON.stringify(tranningSet),
+    // JSON.stringify(testSet),
     tranningSet.length
   );
   let predict;

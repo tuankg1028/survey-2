@@ -202,6 +202,8 @@ class SurveyController {
           ...tranningIds.slice(3, 4)
         ];
 
+        if (questionIds && questionIds.length !== 40)
+          throw new Error("Something went wrong");
         await Models.User.updateOne(
           {
             _id: user.id
