@@ -6,9 +6,10 @@ var schema = new Schema(
   {
     id: String,
     name: String,
-    lv1: { type: Object },
-    lv3: { type: Object },
-    subItem: {
+    path: String,
+    type: String,
+    param2: { type: Object },
+    param3: {
       type: Object
     },
     text: String

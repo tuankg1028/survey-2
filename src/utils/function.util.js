@@ -2731,6 +2731,73 @@ const getOurPredictionApproach1 = async (
   );
 
   const tranningSet = tranningQuestions.map((tranningQuestion, index) => {
+    let row = [];
+    switch (tranningQuestion.type) {
+      case "type1": {
+        const interactions = constants.interactions.map(item => {
+          return _.includes(
+            [
+              tranningQuestion.id,
+              tranningQuestion.param2.id,
+              tranningQuestion.param3.id
+            ],
+            item[0]
+          )
+            ? 1
+            : 0;
+        });
+
+        const services = constants.services.map(item => 0);
+        const permissions = constants.permissions.map(item => 0);
+        const collections = constants.collections.map(item => 0);
+        row = [...interactions, ...services, ...permissions, ...collections];
+
+        break;
+      }
+      case "type2": {
+        const interactions = constants.interactions.map(item => {
+          return _.includes([tranningQuestion.id], item[0]) ? 1 : 0;
+        });
+
+        const services = constants.services.map(item => 0);
+        const permissions = constants.permissions.map(item => {
+          return _.includes(
+            [tranningQuestion.param2.id, tranningQuestion.param3.id],
+            item[0]
+          )
+            ? 1
+            : 0;
+        });
+
+        const collections = constants.collections.map(item => 0);
+        row = [...interactions, ...services, ...permissions, ...collections];
+
+        break;
+      }
+      default: {
+        const interactions = constants.interactions.map(item => 0);
+
+        const services = constants.services.map(item => {
+          return _.includes(
+            [tranningQuestion.param2.id, tranningQuestion.param3.id],
+            item[0]
+          )
+            ? 1
+            : 0;
+        });
+
+        const permissions = constants.permissions.map(item => 0);
+
+        const collections = constants.collections.map(item => {
+          return _.includes([tranningQuestion.id], item[0]) ? 1 : 0;
+        });
+
+        row = [...interactions, ...services, ...permissions, ...collections];
+
+        break;
+      }
+    }
+
     const interactions = constants.interactions.map(item => {
       return _.includes(
         [tranningQuestion.id, tranningQuestion.lv1.id, tranningQuestion.lv3.id],

@@ -74,9 +74,11 @@ async function getQuestionsByStage(
   // convert questions
   questions = questions.map(question => {
     const text =
-      question.subItem.type === "permission"
-        ? `You are <b>${question.name}</b>. Do you allow to share your <b>${question.lv3.name}</b> with you <b>${question.subItem.name}</b>?`
-        : `You are <b>${question.name}</b>. Do you allow to share your <b>${question.lv3.name}</b> to collect your <b>${question.subItem.name}</b>?`;
+      question.type === "type1"
+        ? `You are <b>${question.name}</b>. Do you want to share your <b>${question.param2.name}</b> with you <b>${question.param3.name}</b>?`
+        : question.type === "type2"
+        ? `You are <b>${question.name}</b>. Do you allow your <b>${question.param2.name}</b> to access your <b>${question.param3.name}</b>?`
+        : `Do you want your <b>${question.name}</b> to be collected by <b>${question.param2.name}</b> App for <b>${question.param3.name}</b>?`;
     return {
       ...question.toJSON(),
       _id: question._id,
