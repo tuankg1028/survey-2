@@ -19,7 +19,10 @@ class AuthValidator {
           if (user) throw Error("The email is already in use");
 
           return true;
-        })
+        }),
+      check("age")
+        .isNumeric()
+        .withMessage("Age must be a number")
     ];
   }
 
