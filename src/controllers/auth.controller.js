@@ -3,7 +3,7 @@ import Utils from "../utils";
 import bcrypt from "bcrypt";
 import Services from "../services";
 import { validationResult } from "express-validator";
-
+import moment from "moment";
 class AuthController {
   async login(req, res, next) {
     try {
@@ -11,6 +11,18 @@ class AuthController {
       delete req.session.errors;
       delete req.session.user;
 
+      // const users = await Models.User.updateMany(
+      //   {
+      //     createdAt: { $gte: moment("2021-08-29T13:00:00.399+00:00") }
+      //   },
+      //   {
+      //     $set: {
+      //       campaignId: "1ab92b836867"
+      //     }
+      //   }
+      // );
+
+      // console.log(1, users[0], users.length);
       res.render("auth/login", { errors });
     } catch (error) {
       next(error);

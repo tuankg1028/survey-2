@@ -14,6 +14,9 @@ var userSchema = new Schema(
     age: Number,
     groupSurvey: String,
     questionIds: [String],
+    campaignId: {
+      type: String
+    },
     nextStage: {
       type: String,
       default: "training"
