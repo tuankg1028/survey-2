@@ -11,7 +11,7 @@ var userSchema = new Schema(
     country: String,
     speciality: String,
     occupation: String,
-    age: String,
+    age: Number,
     groupSurvey: String,
     questionIds: [String],
     nextStage: {
