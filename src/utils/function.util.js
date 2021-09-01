@@ -2715,17 +2715,18 @@ const getOurPredictionApproach1 = async (
   tranningIds,
   userAnswer,
   question,
-  algorithm = "EM"
+  algorithm = "EM",
+  questionPrediction = []
 ) => {
-  console.log(
-    "Prediction :: Step 1: input",
-    JSON.stringify({
-      tranningIds,
-      userAnswer,
-      question,
-      algorithm
-    })
-  );
+  // console.log(
+  //   "Prediction :: Step 1: input",
+  //   JSON.stringify({
+  //     tranningIds,
+  //     userAnswer,
+  //     question,
+  //     algorithm
+  //   })
+  // );
   const tranningQuestions = await Promise.all(
     tranningIds.map(id => Models.Question.findById(id).cache(60 * 60 * 24 * 30))
   );
@@ -2821,7 +2822,15 @@ const getOurPredictionApproach1 = async (
 
     if (!questionInstallation) throw Error("Answer not found");
 
-    let label = questionInstallation.value;
+    let label;
+    const ourPrediction = questionPrediction.find(
+      item => item.id === tranningQuestion.id
+    );
+    if (ourPrediction) {
+      label = ourPrediction.value;
+    } else {
+      label = questionInstallation.value;
+    }
 
     return [...row, Number(label)];
   });

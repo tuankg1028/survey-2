@@ -9,7 +9,8 @@
     "build": "npm run clean && npm run build-babel",
     "start": "node dist/app.js",
     "dev": "babel-watch src/app.js",
-    "seed": "babel-watch src/seeder.js"
+    "seed": "babel-watch src/seeder.js",
+    "stats": "babel-watch src/stats/index"
   },
   "heroku-prebuild": "rm -rf node_modules",
   "dependencies": {

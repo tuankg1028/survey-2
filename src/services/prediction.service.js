@@ -4,7 +4,7 @@ class Prediction {
   constructor() {
     this.API = axios.create({
       baseURL: "https://rais.dista.uninsubria.it/algorithm",
-      timeout: 60 * 1000
+      timeout: 60 * 1000 * 30
     });
   }
 

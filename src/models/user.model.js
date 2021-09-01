@@ -13,6 +13,7 @@ var userSchema = new Schema(
     occupation: String,
     age: Number,
     groupSurvey: String,
+    type: String,
     questionIds: [String],
     campaignId: {
       type: String
@@ -51,7 +52,8 @@ var userSchema = new Schema(
     },
     OSOfDevices: {
       type: String
-    }
+    },
+    ignored: Boolean
   },
   {
     timestamps: true,

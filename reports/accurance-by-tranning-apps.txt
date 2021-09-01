@@ -1,0 +1,199 @@
+
+    * expert: 
+  
+      - Approach 1: 
+        Accurancy: 0.05 
+
+        Precision Yes: 0
+        Precision No: 0
+        Precision Maybe: 0 
+      
+        Recall Yes: 0.05
+        Recall No: NaN
+        Recall Maybe: NaN
+      
+        F1 Yes: 0
+        F1 No: NaN
+        F1 Maybe: NaN 
+
+  
+      - Approach 2: 
+        Accurancy: 0.05 
+
+        Precision Yes: 0
+        Precision No: 0
+        Precision Maybe: 0 
+      
+        Recall Yes: 0.05
+        Recall No: NaN
+        Recall Maybe: NaN
+      
+        F1 Yes: 0
+        F1 No: NaN
+        F1 Maybe: NaN 
+
+  
+      - Approach 3: 
+        Accurancy: 0.05 
+
+        Precision Yes: 0
+        Precision No: 0
+        Precision Maybe: 0 
+      
+        Recall Yes: 0.05
+        Recall No: NaN
+        Recall Maybe: NaN
+      
+        F1 Yes: 0
+        F1 No: NaN
+        F1 Maybe: NaN 
+
+  
+      - Approach 4: 
+        Accurancy: 0.05 
+
+        Precision Yes: 0
+        Precision No: 0
+        Precision Maybe: 0 
+      
+        Recall Yes: 0.05
+        Recall No: NaN
+        Recall Maybe: NaN
+      
+        F1 Yes: 0
+        F1 No: NaN
+        F1 Maybe: NaN 
+
+  
+    * paid: 
+  
+      - Approach 1: 
+        Accurancy: NaN 
+
+        Precision Yes: NaN
+        Precision No: NaN
+        Precision Maybe: NaN 
+      
+        Recall Yes: NaN
+        Recall No: NaN
+        Recall Maybe: NaN
+      
+        F1 Yes: NaN
+        F1 No: NaN
+        F1 Maybe: NaN 
+
+  
+      - Approach 2: 
+        Accurancy: NaN 
+
+        Precision Yes: NaN
+        Precision No: NaN
+        Precision Maybe: NaN 
+      
+        Recall Yes: NaN
+        Recall No: NaN
+        Recall Maybe: NaN
+      
+        F1 Yes: NaN
+        F1 No: NaN
+        F1 Maybe: NaN 
+
+  
+      - Approach 3: 
+        Accurancy: NaN 
+
+        Precision Yes: NaN
+        Precision No: NaN
+        Precision Maybe: NaN 
+      
+        Recall Yes: NaN
+        Recall No: NaN
+        Recall Maybe: NaN
+      
+        F1 Yes: NaN
+        F1 No: NaN
+        F1 Maybe: NaN 
+
+  
+      - Approach 4: 
+        Accurancy: NaN 
+
+        Precision Yes: NaN
+        Precision No: NaN
+        Precision Maybe: NaN 
+      
+        Recall Yes: NaN
+        Recall No: NaN
+        Recall Maybe: NaN
+      
+        F1 Yes: NaN
+        F1 No: NaN
+        F1 Maybe: NaN 
+
+  
+    * unpaid: 
+  
+      - Approach 1: 
+        Accurancy: NaN 
+
+        Precision Yes: NaN
+        Precision No: NaN
+        Precision Maybe: NaN 
+      
+        Recall Yes: NaN
+        Recall No: NaN
+        Recall Maybe: NaN
+      
+        F1 Yes: NaN
+        F1 No: NaN
+        F1 Maybe: NaN 
+
+  
+      - Approach 2: 
+        Accurancy: NaN 
+
+        Precision Yes: NaN
+        Precision No: NaN
+        Precision Maybe: NaN 
+      
+        Recall Yes: NaN
+        Recall No: NaN
+        Recall Maybe: NaN
+      
+        F1 Yes: NaN
+        F1 No: NaN
+        F1 Maybe: NaN 
+
+  
+      - Approach 3: 
+        Accurancy: NaN 
+
+        Precision Yes: NaN
+        Precision No: NaN
+        Precision Maybe: NaN 
+      
+        Recall Yes: NaN
+        Recall No: NaN
+        Recall Maybe: NaN
+      
+        F1 Yes: NaN
+        F1 No: NaN
+        F1 Maybe: NaN 
+
+  
+      - Approach 4: 
+        Accurancy: NaN 
+
+        Precision Yes: NaN
+        Precision No: NaN
+        Precision Maybe: NaN 
+      
+        Recall Yes: NaN
+        Recall No: NaN
+        Recall Maybe: NaN
+      
+        F1 Yes: NaN
+        F1 No: NaN
+        F1 Maybe: NaN 
+
+  
