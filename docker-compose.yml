@@ -24,9 +24,9 @@ services:
           cpus: '0.50'
           memory: 256M
       # service restart policy
-      replicas: 10
+      replicas: 1
       update_config:
-        parallelism: 2
+        parallelism: 1
         order: start-first
         failure_action: rollback
         delay: 10s
