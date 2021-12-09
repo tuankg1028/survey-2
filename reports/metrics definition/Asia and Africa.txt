@@ -1,0 +1,73 @@
+
+      * Approach 1: 
+        Accurancy: 0.8165289256198347 
+  
+        Satisfaction: 0.9586776859504132 
+      
+        Precision Yes: 0.8906666666666667
+        Precision No: 0.5748031496062992
+        Precision Maybe: 0.8446601941747572 
+      
+        Recall Yes: 0.9329608938547486
+        Recall No: 0.7156862745098039
+        Recall Maybe: 0.6
+      
+        F1 Yes: 0.9113233287858118
+        F1 No: 0.6375545851528384
+        F1 Maybe: 0.7016129032258065 
+
+    
+      * Approach 2: 
+        Accurancy: 0.8099173553719008 
+  
+        Satisfaction: 0.9628099173553719 
+      
+        Precision Yes: 0.877906976744186
+        Precision No: 0.6280487804878049
+        Precision Maybe: 0.8762886597938144 
+      
+        Recall Yes: 0.934984520123839
+        Recall No: 0.7862595419847328
+        Recall Maybe: 0.5629139072847682
+      
+        F1 Yes: 0.9055472263868066
+        F1 No: 0.6983050847457627
+        F1 Maybe: 0.685483870967742 
+
+    
+      * Approach 3: 
+        Accurancy: 0.8330578512396695 
+  
+        Satisfaction: 0.9793388429752066 
+      
+        Precision Yes: 0.9015151515151515
+        Precision No: 0.6129032258064516
+        Precision Maybe: 0.8352941176470589 
+      
+        Recall Yes: 0.967479674796748
+        Recall No: 0.7238095238095238
+        Recall Maybe: 0.5419847328244275
+      
+        F1 Yes: 0.9333333333333333
+        F1 No: 0.6637554585152838
+        F1 Maybe: 0.6574074074074074 
+
+    
+      * Approach 4: 
+        Accurancy: 0.7619834710743801 
+  
+        Satisfaction: 0.9917355371900827 
+      
+        Precision Yes: NaN
+        Precision No: 0.7619834710743801
+        Precision Maybe: NaN 
+      
+        Recall Yes: 0
+        Recall No: 1
+        Recall Maybe: 0
+      
+        F1 Yes: NaN
+        F1 No: 0.8649155722326454
+        F1 Maybe: NaN 
+
+    

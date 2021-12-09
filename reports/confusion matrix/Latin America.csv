@@ -1,0 +1,17 @@
+,Predicted value: YES,Predicted value: NO,Predicted value: MAYBE
+Approach 1,,,
+Actual value: Yes,187,11,5
+Actual value: No,13,90,5
+Actual value: Maybe,20,18,71
+Approach 2,,,
+Actual value: Yes,206,13,4
+Actual value: No,8,90,10
+Actual value: Maybe,13,20,56
+Approach 3,,,
+Actual value: Yes,214,6,4
+Actual value: No,11,78,14
+Actual value: Maybe,23,16,54
+Approach 4,,,
+Actual value: Yes,0,41,0
+Actual value: No,0,330,0
+Actual value: Maybe,0,49,0

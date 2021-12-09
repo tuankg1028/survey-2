@@ -1,20 +1,20 @@
 const path = require("path");
 const chalk = require("chalk");
+const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+import moment from "moment";
+
 require("dotenv").config({ path: path.join(__dirname, "../../.env") });
 import "../configs/mongoose.config";
 import Models from "../models";
-const createCsvWriter = require("csv-writer").createObjectCsvWriter;
+import Microworker from "../services/microworker";
 import _ from "lodash";
 import Utils from "../utils";
+const REGIONS = {
+  "1ab92b836867": "Asia and Africa",
+  "4b9b971132f5": "Latin America"
+};
 function getRegionByCampaignId(campaignId) {
-  const regions = {
-    "0d3a745340d0": "Europe East",
-    "99cf426fa790": "Latin America",
-    "7cfcb3709b44": "Europe West",
-    "4d74caeee538": "Asia - Africa",
-    e0a4b9cf46eb: "USA - Western"
-  };
-  return regions[campaignId];
+  return REGIONS[campaignId];
 }
 
 import fs from "fs";
@@ -96,18 +96,13 @@ const file1 = async type => {
   console.log("==== DONE FILE 1 ====");
 };
 
-const file2 = async type => {
-  let allAnswers = await Models.Answer.find();
-  allAnswers = allAnswers.filter(item => item.questions.length === 26);
-
-  const answers = [];
-  for (let i = 0; i < allAnswers.length; i++) {
-    const answer = allAnswers[i];
-
-    const user = await Models.User.findById(answer.userId);
-
-    if (user.type === type) answers.push(answer);
-  }
+const file2 = async (type, campaignId) => {
+  let users = await Models.User.find({
+    ignored: { $exists: false },
+    type,
+    campaignId
+  });
+  users = users.filter(item => item.questions.length === 40);
 
   const header = [
     {
@@ -124,16 +119,17 @@ const file2 = async type => {
     }
   ];
   let rows = [];
-  for (let j = 0; j < answers.length; j++) {
-    const answer = answers[j];
-    let { questions, userId } = answer;
-    questions = [questions[13], questions[17], questions[21], questions[25]];
-    const user = await Models.User.findById(userId);
+  for (let j = 0; j < users.length; j++) {
+    const user = users[j];
+    let { questions } = user;
+    questions = [questions[24], questions[29], questions[34], questions[39]];
 
     questions.forEach((question, i) => {
       const responses = question.responses;
-      const indexComment = responses.findIndex(item => item.name === "comment");
-
+      const indexComment = responses.findIndex(
+        item => item.name === "finalComment"
+      );
+      console.log(responses);
       rows.push({
         stt: i + 1,
         email: user.email,
@@ -144,7 +140,11 @@ const file2 = async type => {
   rows = _.orderBy(rows, "stt");
 
   const csvWriter = createCsvWriter({
-    path: `file-2 (${type === "microworker" ? "microworker" : "expert"}).csv`,
+    path: `./reports/comments/${
+      type === "microworker"
+        ? `microworker-${getRegionByCampaignId(campaignId)}`
+        : "expert"
+    }.csv`,
     header: header
   });
   await csvWriter.writeRecords(rows);
@@ -152,21 +152,33 @@ const file2 = async type => {
   console.log("==== DONE FILE 2 ====");
 };
 
-const file3 = async type => {
-  let allAnswers = await Models.Answer.find();
-  allAnswers = allAnswers.filter(item => item.questions.length === 26);
-
-  const answers = [];
-  for (let i = 0; i < allAnswers.length; i++) {
-    const answer = allAnswers[i];
-
-    const user = await Models.User.findById(answer.userId);
-
-    if (user.type === type) answers.push(answer);
+const file3 = async (type, campaignId) => {
+  let workers = [];
+  if (campaignId) {
+    const slots = await Microworker.getSlotsByCampaignId(campaignId);
+    workers = slots.map(item => ({
+      id: item.workerId,
+      email: item.tasksAnswers[0].questionsAnswers[0].answer
+    }));
   }
+
+  let users = await Models.User.find({
+    ignored: { $exists: false },
+    type,
+    campaignId
+  });
+  users = users.filter(item => item.questions.length === 40);
+
+  users = users.filter(
+    user => user.type === type && user.campaignId === campaignId
+  );
 
   // file
   const header = [
+    {
+      id: "workerId",
+      title: "Worker id"
+    },
     {
       id: "email",
       title: "Email"
@@ -182,21 +194,18 @@ const file3 = async type => {
     {
       id: "correctAnswer",
       title: "Correct Answer"
-    },
-    {
-      id: "time",
-      title: "Time"
     }
   ];
   const rows1 = [];
-  for (let i = 0; i < answers.length; i++) {
-    const answer = answers[i];
-    const user = await Models.User.findById(answer.userId);
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    const worker = workers.find(item => item.email === user.email) || {};
     const questions = [
-      answer.questions[10],
-      answer.questions[11],
-      answer.questions[12],
-      answer.questions[13]
+      user.questions[20],
+      user.questions[21],
+      user.questions[22],
+      user.questions[23],
+      user.questions[24]
     ];
 
     questions.forEach(({ responses }, index) => {
@@ -207,10 +216,10 @@ const file3 = async type => {
       const indexOurPredict = responses.findIndex(
         item => item.name === "ourPrediction"
       );
-      const indexTime = responses.findIndex(item => item.name === "time");
       rows1.push({
+        workerId: worker.id,
         email: user.email,
-        appNumber: 11 + index,
+        appNumber: 21 + index,
         satisfiedLevel: responses[indexAgreePredict].value == 1 ? "Yes" : "No",
         correctAnswer:
           responses[indexAgreePredict].value == 1
@@ -219,15 +228,16 @@ const file3 = async type => {
             ? "No"
             : responses[indexInstall].value == 1
             ? "Yes"
-            : "Maybe",
-        time: responses[indexTime].value
+            : "Maybe"
       });
     });
   }
 
   const csvWriter1 = createCsvWriter({
-    path: `file-3-accuracy-approach-1 (${
-      type === "microworker" ? "microworker" : "expert"
+    path: `./reports/accuracy/accuracy-approach-1 (${
+      type === "microworker"
+        ? `microworker-${getRegionByCampaignId(campaignId)}`
+        : "expert"
     }).csv`,
     header
   });
@@ -235,14 +245,15 @@ const file3 = async type => {
 
   //
   const rows2 = [];
-  for (let i = 0; i < answers.length; i++) {
-    const answer = answers[i];
-    const user = await Models.User.findById(answer.userId);
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    const worker = workers.find(item => item.email === user.email) || {};
     const questions = [
-      answer.questions[14],
-      answer.questions[15],
-      answer.questions[16],
-      answer.questions[17]
+      user.questions[25],
+      user.questions[26],
+      user.questions[27],
+      user.questions[28],
+      user.questions[29]
     ];
 
     questions.forEach(({ responses }, index) => {
@@ -253,10 +264,11 @@ const file3 = async type => {
       const indexOurPredict = responses.findIndex(
         item => item.name === "ourPrediction"
       );
-      const indexTime = responses.findIndex(item => item.name === "time");
+
       rows2.push({
+        workerId: worker.id,
         email: user.email,
-        appNumber: 15 + index,
+        appNumber: 26 + index,
         satisfiedLevel: responses[indexAgreePredict].value == 1 ? "Yes" : "No",
         correctAnswer:
           responses[indexAgreePredict].value == 1
@@ -265,15 +277,16 @@ const file3 = async type => {
             ? "No"
             : responses[indexInstall].value == 1
             ? "Yes"
-            : "Maybe",
-        time: responses[indexTime].value
+            : "Maybe"
       });
     });
   }
 
   const csvWriter2 = createCsvWriter({
-    path: `file-3-accuracy-approach-2 (${
-      type === "microworker" ? "microworker" : "expert"
+    path: `./reports/accuracy/accuracy-approach-2 (${
+      type === "microworker"
+        ? `microworker-${getRegionByCampaignId(campaignId)}`
+        : "expert"
     }).csv`,
     header
   });
@@ -281,14 +294,15 @@ const file3 = async type => {
 
   //
   const rows3 = [];
-  for (let i = 0; i < answers.length; i++) {
-    const answer = answers[i];
-    const user = await Models.User.findById(answer.userId);
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    const worker = workers.find(item => item.email === user.email) || {};
     const questions = [
-      answer.questions[18],
-      answer.questions[19],
-      answer.questions[20],
-      answer.questions[21]
+      user.questions[30],
+      user.questions[31],
+      user.questions[32],
+      user.questions[33],
+      user.questions[34]
     ];
 
     questions.forEach(({ responses }, index) => {
@@ -299,10 +313,11 @@ const file3 = async type => {
       const indexOurPredict = responses.findIndex(
         item => item.name === "ourPrediction"
       );
-      const indexTime = responses.findIndex(item => item.name === "time");
+
       rows3.push({
+        workerId: worker.id,
         email: user.email,
-        appNumber: 19 + index,
+        appNumber: 31 + index,
         satisfiedLevel: responses[indexAgreePredict].value == 1 ? "Yes" : "No",
         correctAnswer:
           responses[indexAgreePredict].value == 1
@@ -311,15 +326,16 @@ const file3 = async type => {
             ? "No"
             : responses[indexInstall].value == 1
             ? "Yes"
-            : "Maybe",
-        time: responses[indexTime].value
+            : "Maybe"
       });
     });
   }
 
   const csvWriter3 = createCsvWriter({
-    path: `file-3-accuracy-approach-3 (${
-      type === "microworker" ? "microworker" : "expert"
+    path: `./reports/accuracy/accuracy-approach-3 (${
+      type === "microworker"
+        ? `microworker-${getRegionByCampaignId(campaignId)}`
+        : "expert"
     }).csv`,
     header
   });
@@ -327,14 +343,15 @@ const file3 = async type => {
 
   //
   const rows4 = [];
-  for (let i = 0; i < answers.length; i++) {
-    const answer = answers[i];
-    const user = await Models.User.findById(answer.userId);
+  for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+    const worker = workers.find(item => item.email === user.email) || {};
     const questions = [
-      answer.questions[22],
-      answer.questions[23],
-      answer.questions[24],
-      answer.questions[25]
+      user.questions[35],
+      user.questions[36],
+      user.questions[37],
+      user.questions[38],
+      user.questions[39]
     ];
 
     questions.forEach(({ responses }, index) => {
@@ -345,10 +362,11 @@ const file3 = async type => {
       const indexOurPredict = responses.findIndex(
         item => item.name === "ourPrediction"
       );
-      const indexTime = responses.findIndex(item => item.name === "time");
+
       rows4.push({
+        workerId: worker.id,
         email: user.email,
-        appNumber: 23 + index,
+        appNumber: 36 + index,
         satisfiedLevel: responses[indexAgreePredict].value == 1 ? "Yes" : "No",
         correctAnswer:
           responses[indexAgreePredict].value == 1
@@ -357,15 +375,16 @@ const file3 = async type => {
             ? "No"
             : responses[indexInstall].value == 1
             ? "Yes"
-            : "Maybe",
-        time: responses[indexTime].value
+            : "Maybe"
       });
     });
   }
 
   const csvWriter4 = createCsvWriter({
-    path: `file-3-accuracy-approach-4 (${
-      type === "microworker" ? "microworker" : "expert"
+    path: `./reports/accuracy/accuracy-approach-4 (${
+      type === "microworker"
+        ? `microworker-${getRegionByCampaignId(campaignId)}`
+        : "expert"
     }).csv`,
     header
   });
@@ -373,7 +392,6 @@ const file3 = async type => {
   // eslint-disable-next-line no-console
   console.log("==== DONE FILE 3 ====");
 };
-
 const file4 = async type => {
   let allAnswers = await Models.Answer.find();
   allAnswers = allAnswers.filter(item => item.questions.length === 26);
@@ -502,29 +520,25 @@ const file4 = async type => {
 };
 
 const file4ByRegion = async campaignId => {
-  let allAnswers = await Models.Answer.find();
-  allAnswers = allAnswers.filter(item => item.questions.length === 26);
-
-  const answers = [],
-    users = [];
-  for (let i = 0; i < allAnswers.length; i++) {
-    const answer = allAnswers[i];
-
-    const user = await Models.User.findById(answer.userId);
-
-    if (user.type === "microworker" && user.campaignId === campaignId) {
-      answers.push(answer);
-      users.push(user);
-    }
-  }
+  let users = await Models.User.find({
+    ignored: { $exists: false },
+    campaignId
+  });
+  users = users.filter(item => item.questions.length === 40);
 
   let result1 = 0;
   let resultMaybe1 = 0;
 
-  for (let j = 0; j < answers.length; j++) {
-    const answer = answers[j];
-    let { questions } = answer;
-    questions = [questions[10], questions[11], questions[12], questions[13]];
+  for (let j = 0; j < users.length; j++) {
+    const user = users[j];
+    let { questions } = user;
+    questions = [
+      questions[20],
+      questions[21],
+      questions[22],
+      questions[23],
+      questions[24]
+    ];
 
     questions.forEach((question, i) => {
       const responses = question.responses;
@@ -541,10 +555,16 @@ const file4ByRegion = async campaignId => {
 
   let result2 = 0;
   let resultMaybe2 = 0;
-  for (let j = 0; j < answers.length; j++) {
-    const answer = answers[j];
-    let { questions } = answer;
-    questions = [questions[14], questions[15], questions[16], questions[17]];
+  for (let j = 0; j < users.length; j++) {
+    const user = users[j];
+    let { questions } = user;
+    questions = [
+      questions[25],
+      questions[26],
+      questions[27],
+      questions[28],
+      questions[29]
+    ];
 
     questions.forEach((question, i) => {
       const responses = question.responses;
@@ -562,10 +582,16 @@ const file4ByRegion = async campaignId => {
 
   let result3 = 0;
   let resultMaybe3 = 0;
-  for (let j = 0; j < answers.length; j++) {
-    const answer = answers[j];
-    let { questions } = answer;
-    questions = [questions[18], questions[19], questions[20], questions[21]];
+  for (let j = 0; j < users.length; j++) {
+    const user = users[j];
+    let { questions } = user;
+    questions = [
+      questions[30],
+      questions[31],
+      questions[32],
+      questions[33],
+      questions[34]
+    ];
 
     questions.forEach((question, i) => {
       const responses = question.responses;
@@ -583,10 +609,16 @@ const file4ByRegion = async campaignId => {
 
   let result4 = 0;
   let resultMaybe4 = 0;
-  for (let j = 0; j < answers.length; j++) {
-    const answer = answers[j];
-    let { questions } = answer;
-    questions = [questions[22], questions[23], questions[24], questions[25]];
+  for (let j = 0; j < users.length; j++) {
+    const user = users[j];
+    let { questions } = user;
+    questions = [
+      questions[35],
+      questions[36],
+      questions[37],
+      questions[38],
+      questions[39]
+    ];
 
     questions.forEach((question, i) => {
       const responses = question.responses;
@@ -604,22 +636,22 @@ const file4ByRegion = async campaignId => {
 
   let content = `
   Accuracy:
-    Approach 1: ${Math.round((result1 / (answers.length * 4)) * 10000) / 100} 
-    Approach 2: ${Math.round((result2 / (answers.length * 4)) * 10000) / 100} 
-    Approach 3: ${Math.round((result3 / (answers.length * 4)) * 10000) / 100} 
-    Approach 4: ${Math.round((result4 / (answers.length * 4)) * 10000) / 100}
+    Approach 1: ${Math.round((result1 / (users.length * 4)) * 10000) / 100} 
+    Approach 2: ${Math.round((result2 / (users.length * 4)) * 10000) / 100} 
+    Approach 3: ${Math.round((result3 / (users.length * 4)) * 10000) / 100} 
+    Approach 4: ${Math.round((result4 / (users.length * 4)) * 10000) / 100}
   Satisfied level: 
     Approach 1: ${Math.round(
-      ((result1 * 100 + resultMaybe1 * 50) / (answers.length * 4 * 100)) * 10000
+      ((result1 * 100 + resultMaybe1 * 50) / (users.length * 4 * 100)) * 10000
     ) / 100} 
     Approach 2: ${Math.round(
-      ((result2 * 100 + resultMaybe2 * 50) / (answers.length * 4 * 100)) * 10000
+      ((result2 * 100 + resultMaybe2 * 50) / (users.length * 4 * 100)) * 10000
     ) / 100}  
     Approach 3: ${Math.round(
-      ((result3 * 100 + resultMaybe3 * 50) / (answers.length * 4 * 100)) * 10000
+      ((result3 * 100 + resultMaybe3 * 50) / (users.length * 4 * 100)) * 10000
     ) / 100}  
     Approach 4: ${Math.round(
-      ((result4 * 100 + resultMaybe4 * 50) / (answers.length * 4 * 100)) * 10000
+      ((result4 * 100 + resultMaybe4 * 50) / (users.length * 4 * 100)) * 10000
     ) / 100} \n
   `;
 
@@ -706,7 +738,7 @@ const file4ByRegion = async campaignId => {
   }
 
   fs.writeFileSync(
-    `./reports/file-4 (microworker-${getRegionByCampaignId(campaignId)}).txt`,
+    `./reports/accuracy/(microworker-${getRegionByCampaignId(campaignId)}).txt`,
     content,
     {
       encoding: "utf-8"
@@ -831,29 +863,29 @@ async function confusionMaxtrix() {
         [0, 0, 0]
       ]
     },
-    // paid: {
-    //   1: [
-    //     [0, 0, 0],
-    //     [0, 0, 0],
-    //     [0, 0, 0]
-    //   ],
-    //   2: [
-    //     [0, 0, 0],
-    //     [0, 0, 0],
-    //     [0, 0, 0]
-    //   ],
-    //   3: [
-    //     [0, 0, 0],
-    //     [0, 0, 0],
-    //     [0, 0, 0]
-    //   ],
-    //   4: [
-    //     [0, 0, 0],
-    //     [0, 0, 0],
-    //     [0, 0, 0]
-    //   ]
-    // },
-    unpaid: {
+    "Asia and Africa": {
+      1: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ],
+      2: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ],
+      3: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ],
+      4: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
+      ]
+    },
+    "Latin America": {
       1: [
         [0, 0, 0],
         [0, 0, 0],
@@ -884,10 +916,12 @@ async function confusionMaxtrix() {
   for (let i = 0; i < users.length; i++) {
     const user = users[i];
     const { questions } = user;
-    if (!user || questions.length <= 20) continue;
+    if (!user || questions.length < 40) continue;
     // userType
     const userType =
-      user.type === "expert" ? "expert" : user.isPaid ? "paid" : "unpaid";
+      user.type === "expert"
+        ? "expert"
+        : getRegionByCampaignId(user.campaignId);
 
     for (let j = 20; j < questions.length; j++) {
       const question = questions[j];
@@ -1204,30 +1238,21 @@ async function confusionMaxtrix() {
   //     predictM: matrix["unpaid"][4][2][2]
   //   }
   // ];
-  const csvWriterExpert = createCsvWriter({
-    path: "./reports/confusion matrix/expert.csv",
-    header
-  });
-  await csvWriterExpert.writeRecords(rows["expert"]);
 
-  // paid
-  // const csvWriterPaid = createCsvWriter({
-  //   path: "./reports/confusion matrix/microworker-paid.csv",
-  //   header
-  // });
-  // await csvWriterPaid.writeRecords(rowsForPaid);
-
-  // unpaid
-  const csvWriterUnPaid = createCsvWriter({
-    path: "./reports/confusion matrix/microworker-unpaid.csv",
-    header
-  });
-  await csvWriterUnPaid.writeRecords(rows["unpaid"]);
+  for (const type in rows) {
+    const csvWriterExpert = createCsvWriter({
+      path: `./reports/confusion matrix/${type}.csv`,
+      header
+    });
+    await csvWriterExpert.writeRecords(rows[type]);
+  }
 }
 // metricsDefinition();
 async function metricsDefinition() {
-  const matrix = {
-    expert: {
+  const types = ["expert", "Asia and Africa", "Latin America"];
+  let matrix = {};
+  for (const type of types) {
+    matrix[type] = {
       1: [
         [0, 0, 0],
         [0, 0, 0],
@@ -1248,70 +1273,14 @@ async function metricsDefinition() {
         [0, 0, 0],
         [0, 0, 0]
       ]
-    },
-    paid: {
-      1: [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-      ],
-      2: [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-      ],
-      3: [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-      ],
-      4: [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-      ]
-    },
-    unpaid: {
-      1: [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-      ],
-      2: [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-      ],
-      3: [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-      ],
-      4: [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0]
-      ]
-    },
-    totalexpert: {
+    };
+    matrix[`total${type}`] = {
       1: 0,
       2: 0,
       3: 0,
       4: 0
-    },
-    totalpaid: {
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0
-    },
-    totalunpaid: {
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0
-    },
-    satisfactionexpert: {
+    };
+    matrix[`satisfaction${type}`] = {
       1: {
         attendanceNumber: 0,
         value: 0
@@ -1328,55 +1297,23 @@ async function metricsDefinition() {
         attendanceNumber: 0,
         value: 0
       }
-    },
-    satisfactionpaid: {
-      1: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      2: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      3: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      4: {
-        attendanceNumber: 0,
-        value: 0
-      }
-    },
-    satisfactionunpaid: {
-      1: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      2: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      3: {
-        attendanceNumber: 0,
-        value: 0
-      },
-      4: {
-        attendanceNumber: 0,
-        value: 0
-      }
-    }
-  };
+    };
+  }
+
   const users = await Models.User.find({
     ignored: { $exists: false }
   });
+
   for (let i = 0; i < users.length; i++) {
     const user = users[i];
     const { questions } = user;
+    if (!user || questions.length < 40) continue;
 
-    if (!user || questions.length <= 20) continue;
     // userType
     const userType =
-      user.type === "expert" ? "expert" : user.isPaid ? "paid" : "unpaid";
+      user.type === "expert"
+        ? "expert"
+        : getRegionByCampaignId(user.campaignId);
 
     for (let j = 20; j < questions.length; j++) {
       const question = questions[j];
@@ -1425,311 +1362,112 @@ async function metricsDefinition() {
     }
   }
   console.log(matrix);
-  const result = {
-    expert: { 1: {}, 2: {}, 3: {}, 4: {} },
-    paid: { 1: {}, 2: {}, 3: {}, 4: {} },
-    unpaid: { 1: {}, 2: {}, 3: {}, 4: {} }
-  };
-  // expert
-  for (const approach in result.expert) {
-    result["expert"][approach]["accurancy"] =
-      (matrix["expert"][approach][0][0] +
-        matrix["expert"][approach][1][1] +
-        matrix["expert"][approach][2][2]) /
-      matrix.totalexpert[approach];
 
-    result["expert"][approach]["satisfaction"] =
-      matrix["satisfactionexpert"][approach].value /
-      matrix["satisfactionexpert"][approach].attendanceNumber;
-    //precisionY
-    result["expert"][approach]["precisionY"] =
-      matrix["expert"][approach][0][0] /
-      (matrix["expert"][approach][0][0] +
-        matrix["expert"][approach][1][0] +
-        matrix["expert"][approach][2][0]);
-    //precisionN
-    result["expert"][approach]["precisionN"] =
-      matrix["expert"][approach][0][0] /
-      (matrix["expert"][approach][0][0] +
-        matrix["expert"][approach][1][0] +
-        matrix["expert"][approach][2][0]);
-
-    //precisionM
-    result["expert"][approach]["precisionM"] =
-      matrix["expert"][approach][2][2] /
-      (matrix["expert"][approach][2][2] +
-        matrix["expert"][approach][1][2] +
-        matrix["expert"][approach][0][2]);
-
-    //recallY
-    result["expert"][approach]["recallY"] =
-      matrix["expert"][approach][0][0] /
-      (matrix["expert"][approach][0][0] +
-        matrix["expert"][approach][0][1] +
-        matrix["expert"][approach][0][2]);
-
-    //recallN
-    result["expert"][approach]["recallN"] =
-      matrix["expert"][approach][1][1] /
-      (matrix["expert"][approach][1][1] +
-        matrix["expert"][approach][1][0] +
-        matrix["expert"][approach][1][2]);
-
-    //recallM
-    result["expert"][approach]["recallM"] =
-      matrix["expert"][approach][2][2] /
-      (matrix["expert"][approach][2][2] +
-        matrix["expert"][approach][2][0] +
-        matrix["expert"][approach][2][1]);
-
-    result["expert"][approach]["F1Y"] =
-      (2 *
-        (result["expert"][approach]["precisionY"] *
-          result["expert"][approach]["recallY"])) /
-      (result["expert"][approach]["precisionY"] +
-        result["expert"][approach]["recallY"]);
-
-    result["expert"][approach]["F1N"] =
-      (2 *
-        (result["expert"][approach]["precisionN"] *
-          result["expert"][approach]["recallN"])) /
-      (result["expert"][approach]["precisionN"] +
-        result["expert"][approach]["recallN"]);
-
-    result["expert"][approach]["F1M"] =
-      (2 *
-        (result["expert"][approach]["precisionM"] *
-          result["expert"][approach]["recallM"])) /
-      (result["expert"][approach]["precisionM"] +
-        result["expert"][approach]["recallM"]);
+  let result = {};
+  for (const type of types) {
+    result[type] = { 1: {}, 2: {}, 3: {}, 4: {} };
   }
 
-  // ========= paid ========
-  for (const approach in result.paid) {
-    result["paid"][approach]["accurancy"] =
-      (matrix["paid"][approach][0][0] +
-        matrix["paid"][approach][1][1] +
-        matrix["paid"][approach][2][2]) /
-      matrix.totalpaid[approach];
+  for (const type of types) {
+    for (const approach in result[type]) {
+      result[type][approach]["accurancy"] =
+        (matrix[type][approach][0][0] +
+          matrix[type][approach][1][1] +
+          matrix[type][approach][2][2]) /
+        matrix[`total${type}`][approach];
 
-    result["paid"][approach]["satisfaction"] =
-      matrix["satisfactionpaid"][approach].value /
-      matrix["satisfactionpaid"][approach].attendanceNumber;
-    //precisionY
-    result["paid"][approach]["precisionY"] =
-      matrix["paid"][approach][1][1] /
-      (matrix["paid"][approach][1][1] +
-        matrix["paid"][approach][0][1] +
-        matrix["paid"][approach][2][1]);
-    //precisionN
-    result["paid"][approach]["precisionN"] =
-      matrix["paid"][approach][0][0] /
-      (matrix["paid"][approach][0][0] +
-        matrix["paid"][approach][1][0] +
-        matrix["paid"][approach][2][0]);
+      result[type][approach]["satisfaction"] =
+        matrix[`satisfaction${type}`][approach].value /
+        matrix[`satisfaction${type}`][approach].attendanceNumber;
+      //precisionY
+      result[type][approach]["precisionY"] =
+        matrix[type][approach][1][1] /
+        (matrix[type][approach][1][1] +
+          matrix[type][approach][0][1] +
+          matrix[type][approach][2][1]);
+      //precisionN
+      result[type][approach]["precisionN"] =
+        matrix[type][approach][0][0] /
+        (matrix[type][approach][0][0] +
+          matrix[type][approach][1][0] +
+          matrix[type][approach][2][0]);
 
-    //precisionM
-    result["paid"][approach]["precisionM"] =
-      matrix["paid"][approach][2][2] /
-      (matrix["paid"][approach][2][2] +
-        matrix["paid"][approach][1][2] +
-        matrix["paid"][approach][0][2]);
+      //precisionM
+      result[type][approach]["precisionM"] =
+        matrix[type][approach][2][2] /
+        (matrix[type][approach][2][2] +
+          matrix[type][approach][1][2] +
+          matrix[type][approach][0][2]);
 
-    //recallY
-    result["paid"][approach]["recallY"] =
-      matrix["paid"][approach][1][1] /
-      (matrix["paid"][approach][1][1] +
-        matrix["paid"][approach][1][0] +
-        matrix["paid"][approach][1][2]);
+      //recallY
+      result[type][approach]["recallY"] =
+        matrix[type][approach][1][1] /
+        (matrix[type][approach][1][1] +
+          matrix[type][approach][1][0] +
+          matrix[type][approach][1][2]);
 
-    //recallN
-    result["paid"][approach]["recallN"] =
-      matrix["paid"][approach][0][0] /
-      (matrix["paid"][approach][0][0] +
-        matrix["paid"][approach][0][1] +
-        matrix["paid"][approach][0][2]);
+      //recallN
+      result[type][approach]["recallN"] =
+        matrix[type][approach][0][0] /
+        (matrix[type][approach][0][0] +
+          matrix[type][approach][0][1] +
+          matrix[type][approach][0][2]);
 
-    //recallM
-    result["paid"][approach]["recallM"] =
-      matrix["paid"][approach][2][2] /
-      (matrix["paid"][approach][2][2] +
-        matrix["paid"][approach][2][0] +
-        matrix["paid"][approach][2][1]);
+      //recallM
+      result[type][approach]["recallM"] =
+        matrix[type][approach][2][2] /
+        (matrix[type][approach][2][2] +
+          matrix[type][approach][2][0] +
+          matrix[type][approach][2][1]);
 
-    result["paid"][approach]["F1Y"] =
-      (2 *
-        (result["paid"][approach]["precisionY"] *
-          result["paid"][approach]["recallY"])) /
-      (result["paid"][approach]["precisionY"] +
-        result["paid"][approach]["recallY"]);
+      result[type][approach]["F1Y"] =
+        (2 *
+          (result[type][approach]["precisionY"] *
+            result[type][approach]["recallY"])) /
+        (result[type][approach]["precisionY"] +
+          result[type][approach]["recallY"]);
 
-    result["paid"][approach]["F1N"] =
-      (2 *
-        (result["paid"][approach]["precisionN"] *
-          result["paid"][approach]["recallN"])) /
-      (result["paid"][approach]["precisionN"] +
-        result["paid"][approach]["recallN"]);
+      result[type][approach]["F1N"] =
+        (2 *
+          (result[type][approach]["precisionN"] *
+            result[type][approach]["recallN"])) /
+        (result[type][approach]["precisionN"] +
+          result[type][approach]["recallN"]);
 
-    result["paid"][approach]["F1M"] =
-      (2 *
-        (result["paid"][approach]["precisionM"] *
-          result["paid"][approach]["recallM"])) /
-      (result["paid"][approach]["precisionM"] +
-        result["paid"][approach]["recallM"]);
+      result[type][approach]["F1M"] =
+        (2 *
+          (result[type][approach]["precisionM"] *
+            result[type][approach]["recallM"])) /
+        (result[type][approach]["precisionM"] +
+          result[type][approach]["recallM"]);
+    }
   }
-  // ========= unpaid ========
-  for (const approach in result.unpaid) {
-    result["unpaid"][approach]["accurancy"] =
-      (matrix["unpaid"][approach][0][0] +
-        matrix["unpaid"][approach][1][1] +
-        matrix["unpaid"][approach][2][2]) /
-      matrix.totalunpaid[approach];
+  // content
+  for (const type of types) {
+    let content = "";
+    for (const approach in result[type]) {
+      content += `
+      * Approach ${approach}: 
+        Accurancy: ${result[type][approach]["accurancy"]} 
+  
+        Satisfaction: ${result[type][approach]["satisfaction"]} 
+      
+        Precision Yes: ${result[type][approach]["precisionY"]}
+        Precision No: ${result[type][approach]["precisionN"]}
+        Precision Maybe: ${result[type][approach]["precisionM"]} 
+      
+        Recall Yes: ${result[type][approach]["recallY"]}
+        Recall No: ${result[type][approach]["recallN"]}
+        Recall Maybe: ${result[type][approach]["recallM"]}
+      
+        F1 Yes: ${result[type][approach]["F1Y"]}
+        F1 No: ${result[type][approach]["F1N"]}
+        F1 Maybe: ${result[type][approach]["F1M"]} \n
+    `;
+    }
 
-    result["unpaid"][approach]["satisfaction"] =
-      matrix["satisfactionunpaid"][approach].value /
-      matrix["satisfactionunpaid"][approach].attendanceNumber;
-    //precisionY
-    result["unpaid"][approach]["precisionY"] =
-      matrix["unpaid"][approach][0][0] /
-      (matrix["unpaid"][approach][0][0] +
-        matrix["unpaid"][approach][1][0] +
-        matrix["unpaid"][approach][2][0]);
-
-    //precisionN
-    result["unpaid"][approach]["precisionN"] =
-      matrix["unpaid"][approach][0][0] /
-      (matrix["unpaid"][approach][0][0] +
-        matrix["unpaid"][approach][1][0] +
-        matrix["unpaid"][approach][2][0]);
-
-    //precisionM
-    result["unpaid"][approach]["precisionM"] =
-      matrix["unpaid"][approach][2][2] /
-      (matrix["unpaid"][approach][2][2] +
-        matrix["unpaid"][approach][1][2] +
-        matrix["unpaid"][approach][0][2]);
-
-    //recallY
-    result["unpaid"][approach]["recallY"] =
-      matrix["unpaid"][approach][1][1] /
-      (matrix["unpaid"][approach][1][1] +
-        matrix["unpaid"][approach][1][0] +
-        matrix["unpaid"][approach][1][2]);
-
-    //recallN
-    result["unpaid"][approach]["recallN"] =
-      matrix["unpaid"][approach][0][0] /
-      (matrix["unpaid"][approach][0][0] +
-        matrix["unpaid"][approach][0][1] +
-        matrix["unpaid"][approach][0][2]);
-
-    //recallM
-    result["unpaid"][approach]["recallM"] =
-      matrix["unpaid"][approach][2][2] /
-      (matrix["unpaid"][approach][2][2] +
-        matrix["unpaid"][approach][2][0] +
-        matrix["unpaid"][approach][2][1]);
-
-    result["unpaid"][approach]["F1Y"] =
-      (2 *
-        (result["unpaid"][approach]["precisionY"] *
-          result["unpaid"][approach]["recallY"])) /
-      (result["unpaid"][approach]["precisionY"] +
-        result["unpaid"][approach]["recallY"]);
-
-    result["unpaid"][approach]["F1N"] =
-      (2 *
-        (result["unpaid"][approach]["precisionN"] *
-          result["unpaid"][approach]["recallN"])) /
-      (result["unpaid"][approach]["precisionN"] +
-        result["unpaid"][approach]["recallN"]);
-
-    result["unpaid"][approach]["F1M"] =
-      (2 *
-        (result["unpaid"][approach]["precisionM"] *
-          result["unpaid"][approach]["recallM"])) /
-      (result["unpaid"][approach]["precisionM"] +
-        result["unpaid"][approach]["recallM"]);
+    fs.writeFileSync(`./reports/metrics definition/${type}.txt`, content);
   }
-
-  // expert
-  let expertContent = "";
-  for (const approach in result["expert"]) {
-    expertContent += `
-    * Approach ${approach}: 
-      Accurancy: ${result["expert"][approach]["accurancy"]} 
-
-      Satisfaction: ${result["expert"][approach]["satisfaction"]} 
-    
-      Precision Yes: ${result["expert"][approach]["precisionY"]}
-      Precision No: ${result["expert"][approach]["precisionN"]}
-      Precision Maybe: ${result["expert"][approach]["precisionM"]} 
-    
-      Recall Yes: ${result["expert"][approach]["recallY"]}
-      Recall No: ${result["expert"][approach]["recallN"]}
-      Recall Maybe: ${result["expert"][approach]["recallM"]}
-    
-      F1 Yes: ${result["expert"][approach]["F1Y"]}
-      F1 No: ${result["expert"][approach]["F1N"]}
-      F1 Maybe: ${result["expert"][approach]["F1M"]} \n
-  `;
-  }
-
-  fs.writeFileSync("./reports/metrics definition/expert.txt", expertContent);
-
-  // paid
-  let paidContent = "";
-  for (const approach in result["paid"]) {
-    paidContent += `
-    * Approach ${approach}: 
-      Accurancy: ${result["paid"][approach]["accurancy"]} 
-
-      Satisfaction: ${result["paid"][approach]["satisfaction"]} 
-    
-      Precision Yes: ${result["paid"][approach]["precisionY"]}
-      Precision No: ${result["paid"][approach]["precisionN"]}
-      Precision Maybe: ${result["paid"][approach]["precisionM"]} 
-    
-      Recall Yes: ${result["paid"][approach]["recallY"]}
-      Recall No: ${result["paid"][approach]["recallN"]}
-      Recall Maybe: ${result["paid"][approach]["recallM"]}
-    
-      F1 Yes: ${result["paid"][approach]["F1Y"]}
-      F1 No: ${result["paid"][approach]["F1N"]}
-      F1 Maybe: ${result["paid"][approach]["F1M"]} \n
-  `;
-  }
-  fs.writeFileSync(
-    "./reports/metrics definition/microworker-paid.txt",
-    paidContent
-  );
-
-  // unpaid
-  let unpaidContent = "";
-  for (const approach in result["unpaid"]) {
-    unpaidContent += `
-    * Approach ${approach}: 
-      Accurancy: ${result["unpaid"][approach]["accurancy"]} 
-
-      Satisfaction: ${result["unpaid"][approach]["satisfaction"]} 
-
-      Precision Yes: ${result["unpaid"][approach]["precisionY"]}
-      Precision No: ${result["unpaid"][approach]["precisionN"]}
-      Precision Maybe: ${result["unpaid"][approach]["precisionM"]} 
-    
-      Recall Yes: ${result["unpaid"][approach]["recallY"]}
-      Recall No: ${result["unpaid"][approach]["recallN"]}
-      Recall Maybe: ${result["unpaid"][approach]["recallM"]}
-    
-      F1 Yes: ${result["unpaid"][approach]["F1Y"]}
-      F1 No: ${result["unpaid"][approach]["F1N"]}
-      F1 Maybe: ${result["unpaid"][approach]["F1M"]} \n
-  `;
-  }
-  fs.writeFileSync(
-    "./reports/metrics definition/microworker-unpaid.txt",
-    unpaidContent
-  );
 }
 
 async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
@@ -1985,7 +1723,7 @@ async function calculateAccuranceByAlgorithm(algorithm, experimentNumber) {
   );
   return;
 }
-calculateAccuranceByTranningApps();
+// calculateAccuranceByTranningApps();
 async function calculateAccuranceByTranningApps() {
   const matrix = {
     expert: {
@@ -2385,22 +2123,30 @@ async function calculateAccuranceByTranningApps() {
 // File 1 xem có bao nhiều người chọn theo từng phương án (Yes, No, Maybe)
 // File 2 chứa các comment của họ
 const main = async () => {
-  // const types = ["normal", "microworker"];
-  // for (let i = 0; i < types.length; i++) {
-  //   const type = types[i];
+  const types = ["expert", "microworker"];
+  for (let i = 0; i < types.length; i++) {
+    const type = types[i];
 
-  //   await Promise.all([file1(type), file2(type), file3(type), file4(type)]);
-  // }
+    if (type === "microworker") {
+      for (const campaingId in REGIONS) {
+        await Promise.all([
+          // file1(type, campaingId),
+          file2(type, campaingId),
+          file3(type, campaingId)
+          // file4(type, campaingId)
+        ]);
+      }
+    } else {
+      await Promise.all([
+        // file1(type),
+        file2(type),
+        file3(type)
+        // file4(type)
+      ]);
+    }
+  }
 
-  // const regions = {
-  //   "0d3a745340d0": "Europe East",
-  //   "99cf426fa790": "Latin America",
-  //   "7cfcb3709b44": "Europe West",
-  //   "4d74caeee538": "Asia - Africa",
-  //   e0a4b9cf46eb: "USA - Western"
-  // };
-
-  // for (const campaignId in regions) {
+  // for (const campaignId in REGIONS) {
   //   await file4ByRegion(campaignId);
   // }
 
@@ -2409,19 +2155,19 @@ const main = async () => {
   // await confusionMaxtrix();
   // await metricsDefinition();
 
-  for (let i = 1; i < 6; i++) {
-    await Promise.all([
-      calculateAccuranceByAlgorithm("SVM", i),
-      calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
-      calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
-      calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
-      calculateAccuranceByAlgorithm("EM", i)
-    ]);
+  // for (let i = 1; i < 6; i++) {
+  //   await Promise.all([
+  //     calculateAccuranceByAlgorithm("SVM", i),
+  //     calculateAccuranceByAlgorithm("GradientBoostingClassifier", i),
+  //     calculateAccuranceByAlgorithm("AdaBoostClassifier", i),
+  //     calculateAccuranceByAlgorithm("GradientBoostingRegressor", i),
+  //     calculateAccuranceByAlgorithm("EM", i)
+  //   ]);
 
-    console.log(
-      chalk.default.bgGreen.black("==== Created accurance by algorithms====")
-    );
-  }
+  //   console.log(
+  //     chalk.default.bgGreen.black("==== Created accurance by algorithms====")
+  //   );
+  // }
 
   // await calculateAccuranceByTranningApps();
   // console.log(
@@ -2429,4 +2175,4 @@ const main = async () => {
   // );
   console.log(chalk.default.bgGreen.black("==== DONE ===="));
 };
-// main();
+main();
